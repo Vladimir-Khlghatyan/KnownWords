@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/delete.png</file>
+        <file>icons/delete_disabled.png</file>
+        <file>icons/logo.png</file>
+        <file>icons/reset.png</file>
+        <file>icons/reset_disabled.png</file>
+        <file>icons/settings.png</file>
+        <file>icons/soundPlay.png</file>
+        <file>icons/source.png</file>
+        <file>icons/source_disabled.png</file>
+        <file>icons/split.png</file>
+        <file>icons/toggle_off.png</file>
+        <file>icons/toggle_on.png</file>
+    </qresource>
+</RCC>
