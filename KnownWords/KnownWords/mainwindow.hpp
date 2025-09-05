@@ -5,6 +5,7 @@
 #include <QMainWindow>
 #include <string>
 #include <unordered_set>
+#include <vector>
 
 class QPushButton;
 class QGridLayout;
@@ -13,6 +14,7 @@ class QLabel;
 class QLineEdit;
 class LineEditReadOnly;
 class TextToSpeech;
+class ArmenianTranslator;
 
 class MainWindow : public QMainWindow
 {
@@ -33,6 +35,9 @@ private:
     std::string getExecutableGrandparentDirPath();
     void parseKnownWords();
     void updateMessage(int known = 0, int total = 0);
+    int getRandomNumber(int lower, int upper);
+    void showRandomWord();
+    void showRandomWord(int index);
 
 private slots:
     void onSourceBtn();
@@ -43,6 +48,7 @@ private slots:
     void onDeleteBtn();
     void onKnownBtn();
     void onErrorMsg(const QString& msg);
+    void onTranslationReady(const QString& translatedText);
 
 private:
     QPushButton* m_sourceBtn;
@@ -56,20 +62,24 @@ private:
     QLabel*      m_totalKnownMsg;
     QLabel*      m_sourceMsg;
     QLabel*      m_percentMsg;
-    QLabel*      m_translateMsg;
+    QLabel*      m_translatedText;
     QLabel*      m_errorMsg;
 
-    LineEditReadOnly*   m_lineEdit;
+    LineEditReadOnly* m_lineEdit;
 
     std::unordered_set<std::string> m_knownWordSet;
-    std::unordered_set<std::string> m_currWordSet;
+    std::vector<std::string> m_currWordVec;
+    std::vector<std::string> m_newKnownWordVec;
 
     int m_knownWordCnt;
     int m_currWordCnt;
     int m_currKnownCnt;
+    int m_currIndex;
 
 #ifdef _PLAY_SOUND_
     TextToSpeech* m_textToSpeech;
 #endif // _PLAY_SOUND_
+
+    ArmenianTranslator* m_translator;
 };
 #endif // MAINWINDOW_HPP

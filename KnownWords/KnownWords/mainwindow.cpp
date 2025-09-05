@@ -3,6 +3,7 @@
 #include "sourcedlg.hpp"
 #include "lineeditreadonly.hpp"
 #include "texttospeech.hpp"
+#include "armeniantranslator.hpp"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -16,12 +17,15 @@
 #include <QTimer>
 
 #include <fstream>
+#include <random>
+#include <algorithm>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , m_knownWordCnt(0)
     , m_currWordCnt(0)
     , m_currKnownCnt(0)
+    , m_currIndex(-1)
 {
     setWindowTitle("Known Words");
     setWindowIcon(QIcon(":/icons/logo.png"));
@@ -46,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_lineEdit = new LineEditReadOnly();
     m_lineEdit->setToolTip("Double click to edit.");
-    m_lineEdit->setText("hello");
+    showRandomWord();
 
     m_sourceBtn = getButtonWithIcon("source", "Add new source");
     connect(m_sourceBtn, &QPushButton::clicked, this, &MainWindow::onSourceBtn);
@@ -67,6 +71,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_translateBtn = getButtonWithIcon("translate", "Translate");
     connect(m_translateBtn, &QPushButton::clicked, this, &MainWindow::onTranslateBtn);
+    m_translator = new ArmenianTranslator(this);
+    connect(m_translator, &ArmenianTranslator::errorOccurred, this, &MainWindow::onErrorMsg);
+    connect(m_translator, &ArmenianTranslator::translationReady, this, &MainWindow::onTranslationReady);
 
     m_skipBtn = new QPushButton("Skip");
     m_skipBtn->setCursor(Qt::PointingHandCursor);
@@ -92,11 +99,11 @@ MainWindow::MainWindow(QWidget *parent)
     btnLayout->addWidget(m_knownBtn, Qt::AlignTop);
     btnLayout->addStretch();
 
-    m_translateMsg = new QLabel();
-    m_translateMsg->setProperty("translate", true);
-    m_translateMsg->setAlignment(Qt::AlignCenter);
-    m_translateMsg->setText("բարև");
-    m_translateMsg->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_translatedText = new QLabel();
+    m_translatedText->setProperty("translate", true);
+    m_translatedText->setAlignment(Qt::AlignCenter);
+    m_translatedText->setText("---");
+    m_translatedText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_errorMsg = new QLabel();
     m_errorMsg->setProperty("error", true);
@@ -107,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(m_soundBtn,     1, 1, 1, 1, Qt::AlignRight);
     layout->addWidget(m_translateBtn, 2, 1, 1, 1, Qt::AlignRight);
     layout->addLayout(btnLayout,      4, 0, 1, 2);
-    layout->addWidget(m_translateMsg, 5, 0, 1, 2);
+    layout->addWidget(m_translatedText, 5, 0, 1, 2);
     layout->addWidget(m_errorMsg,     6, 0, 1, 1, Qt::AlignLeft);
 }
 
@@ -184,20 +191,20 @@ void MainWindow::onSourceBtn()
     if (dlg.exec() == QDialog::Accepted)
     {
         const auto& words = dlg.getWords();
-        m_currWordSet.clear();
+        m_currWordVec.clear();
 
-        m_currWordCnt = words.size();
-        m_currKnownCnt = 0;
+        for (const auto& word : words) {
 
-        for (const auto& word : words)
-        {
-            if (m_knownWordSet.count(word) > 0) {
-                ++m_currKnownCnt;
-            } else {
-                m_currWordSet.insert(word);
+            if (m_knownWordSet.count(word) == 0) {
+                m_currWordVec.push_back(word);
             }
         }
+
+        m_currWordCnt = words.size();
+        m_currKnownCnt = words.size() - m_currWordVec.size();
+
         updateMessage(m_currKnownCnt, m_currWordCnt);
+        showRandomWord();
     }
 }
 
@@ -209,12 +216,25 @@ void MainWindow::onSoundBtn()
 
 void MainWindow::onTranslateBtn()
 {
-
+    m_errorMsg->setText("");
+    m_translator->translateToArmenian(m_lineEdit->text());
 }
 
 void MainWindow::onSkipBtn()
 {
+    if (m_currIndex ==-1 || m_currWordVec.size() < 2) {
+        onErrorMsg("This is the last word in the current set.");
+        return;
+    }
 
+    const int prevIndex = m_currIndex;
+    m_currIndex = getRandomNumber(0, m_currWordVec.size() - 1);
+    if (m_currIndex == prevIndex) {
+        m_currIndex += (prevIndex == 0) ? 1 : -1;
+    }
+
+    showRandomWord(m_currIndex);
+    m_translatedText->setText("");
 }
 void MainWindow::onLaterBtn()
 {
@@ -226,7 +246,23 @@ void MainWindow::onDeleteBtn()
 }
 void MainWindow::onKnownBtn()
 {
+    if (m_currIndex == -1) {
+        return;
+    }
 
+    const auto success = m_knownWordSet.insert(m_currWordVec[m_currIndex]);
+    if (success.second == true)
+    {
+        m_newKnownWordVec.push_back(m_currWordVec[m_currIndex]);
+
+        std::swap(m_currWordVec[m_currIndex], m_currWordVec.back());
+        m_currWordVec.pop_back();
+
+        updateMessage(++m_currKnownCnt, m_currWordCnt);
+        showRandomWord();
+
+        m_translatedText->setText("");
+    }
 }
 
 void MainWindow::onErrorMsg(const QString& msg)
@@ -235,6 +271,11 @@ void MainWindow::onErrorMsg(const QString& msg)
     QTimer::singleShot(3000, this, [this]() {
         m_errorMsg->setText("");
     });
+}
+
+void MainWindow::onTranslationReady(const QString& translatedText)
+{
+    m_translatedText->setText(translatedText);
 }
 
 void MainWindow::updateMessage(int known, int total)
@@ -255,4 +296,31 @@ void MainWindow::updateMessage(int known, int total)
         const QString percentMsg = QString::number(static_cast<double>(known) / total * 100, 'f', 1) + "%";
         m_percentMsg->setText(percentMsg);
     }
+}
+
+int MainWindow::getRandomNumber(int lower, int upper)
+{
+    std::random_device rd;
+    std::mt19937 eng(rd());
+
+    std::uniform_int_distribution<> distribution(lower, upper);
+    const int randomNumber = distribution(eng);
+
+    return randomNumber;
+}
+
+void MainWindow::showRandomWord()
+{
+    if (m_currWordVec.empty()) {
+        m_currIndex = -1;
+        m_lineEdit->setText("...");
+    } else {
+        m_currIndex = getRandomNumber(0, m_currWordVec.size() - 1);
+        m_lineEdit->setText(m_currWordVec[m_currIndex].c_str());
+    }
+}
+
+void MainWindow::showRandomWord(int index)
+{
+    m_lineEdit->setText(m_currWordVec[index].c_str());
 }

@@ -17,8 +17,8 @@ void ArmenianTranslator::translateToArmenian(const QString& text)
     QUrl url("https://translate.googleapis.com/translate_a/single");
     QUrlQuery query;
     query.addQueryItem("client", "gtx");
-    query.addQueryItem("sl", "auto"); // auto detect source language
-    query.addQueryItem("tl", "hy");   // target language Armenian
+    query.addQueryItem("sl", "en");
+    query.addQueryItem("tl", "hy");
     query.addQueryItem("dt", "t");
     query.addQueryItem("q", text);
 
