@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
 		mainwindow.hpp
 		texttospeech.hpp texttospeech.cpp
 		sourcedlg.hpp sourcedlg.cpp
+		lineeditreadonly.hpp lineeditreadonly.cpp
 		define.hpp
 		res.qrc
 )

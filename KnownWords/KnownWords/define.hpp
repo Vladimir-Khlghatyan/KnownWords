@@ -23,34 +23,46 @@ QLabel
 QLabel[infoKey="true"]
 {
     font-style: italic;
+    color:      #BFBFBF;
 }
 QLabel[infoVal="true"]
 {
     font-weight: bold;
+    color:       #BFBFBF;
 }
 QLabel[dialog="true"]
 {
     font-size:   14px;
     font-weight: normal;
 }
+QLabel[error="true"]
+{
+    font-style: italic;
+    color:      #DD7D7D;
+}
+QLabel[translate="true"]
+{
+    font-size: 24px;
+}
 QPushButton
 {
     background-color: #52606E;
     color:            white;
-    font-size:        20px;
-    font-weight:      bold;
+    font-size:        16px;
     border-radius:    10px;
+    min-width:        80px;
+    max-width:        80px;
+    min-height:       30px;
+    max-height:       30px;
 }
 QPushButton:hover
 {
     background-color: #708294;
-    color:            white;
-    font-size:        20px;
-    font-weight:      bold;
 }
-QPushButton:disabled
+QPushButton[iconButton="true"]
 {
-    color: gray;
+    min-width:        30px;
+    max-width:        30px;
 }
 QToolTip
 {
@@ -59,30 +71,18 @@ QToolTip
     color:      #9B9C9C;
     font-size:  14px;
 }
-QPushButton[dialog="true"]
-{
-    background-color: #52606E;
-    color:            white;
-    font-size:        16px;
-    font-weight:      normal;
-    border-radius:    10px;
-    min-width:        80px;
-    max-width:        80px;
-    min-height:       30px;
-    max-height:       30px;
-}
-QPushButton:hover[dialog="true"]
-{
-    background-color: #708294;
-    color:            white;
-    font-size:        16px;
-    font-weight:      normal;
-}
 QTextEdit
 {
     border:     1px solid #9B9C9C;
     background: #2e2f30;
     color:      white;
+}
+QLineEdit
+{
+    border:     none;
+    background: #272727;
+    color:      white;
+    font-size:  32px;
 }
 )");
 

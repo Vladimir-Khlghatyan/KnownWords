@@ -22,15 +22,12 @@ SourceDlg::SourceDlg(QWidget* parent)
     setWindowTitle("Add source");
     setMinimumSize(400,100);
 
-
     m_cancelBtn = new QPushButton("Cancel");
     m_cancelBtn->setCursor(Qt::PointingHandCursor);
-    m_cancelBtn->setProperty("dialog", true);
     connect(m_cancelBtn, &QPushButton::clicked, this, &SourceDlg::onCencel);
 
     m_okBtn = new QPushButton("Ok");
     m_okBtn->setCursor(Qt::PointingHandCursor);
-    m_okBtn->setProperty("dialog", true);
     connect(m_okBtn, &QPushButton::clicked, this, &SourceDlg::onOk);
 
     QHBoxLayout* hLayout = new QHBoxLayout();
