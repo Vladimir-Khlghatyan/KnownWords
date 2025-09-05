@@ -37,6 +37,7 @@ private:
 private slots:
     void onSourceBtn();
     void onSoundBtn();
+    void onTranslateBtn();
     void onSkipBtn();
     void onLaterBtn();
     void onDeleteBtn();
@@ -46,6 +47,7 @@ private slots:
 private:
     QPushButton* m_sourceBtn;
     QPushButton* m_soundBtn;
+    QPushButton* m_translateBtn;
     QPushButton* m_skipBtn;
     QPushButton* m_laterBtn;
     QPushButton* m_deleteBtn;

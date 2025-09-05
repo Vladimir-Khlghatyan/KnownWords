@@ -65,6 +65,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->soundPlayBtn->hide();
 #endif
 
+    m_translateBtn = getButtonWithIcon("translate", "Translate");
+    connect(m_translateBtn, &QPushButton::clicked, this, &MainWindow::onTranslateBtn);
+
     m_skipBtn = new QPushButton("Skip");
     m_skipBtn->setCursor(Qt::PointingHandCursor);
     connect(m_skipBtn, &QPushButton::clicked, this, &MainWindow::onSkipBtn);
@@ -98,13 +101,14 @@ MainWindow::MainWindow(QWidget *parent)
     m_errorMsg = new QLabel();
     m_errorMsg->setProperty("error", true);
 
-    layout->addLayout(m_infoLayout,   0, 0, 2, 1, Qt::AlignLeft | Qt::AlignTop);
-    layout->addWidget(m_lineEdit,     2, 0, 1, 2, Qt::AlignVCenter);
-    layout->addLayout(btnLayout,      3, 0, 1, 2);
+    layout->addLayout(m_infoLayout,   0, 0, 3, 1, Qt::AlignLeft | Qt::AlignTop);
+    layout->addWidget(m_lineEdit,     3, 0, 1, 2, Qt::AlignVCenter);
     layout->addWidget(m_sourceBtn,    0, 1, 1, 1, Qt::AlignRight);
     layout->addWidget(m_soundBtn,     1, 1, 1, 1, Qt::AlignRight);
-    layout->addWidget(m_errorMsg,     5, 0, 1, 1, Qt::AlignLeft);
-    layout->addWidget(m_translateMsg, 4, 0, 1, 2);
+    layout->addWidget(m_translateBtn, 2, 1, 1, 1, Qt::AlignRight);
+    layout->addLayout(btnLayout,      4, 0, 1, 2);
+    layout->addWidget(m_translateMsg, 5, 0, 1, 2);
+    layout->addWidget(m_errorMsg,     6, 0, 1, 1, Qt::AlignLeft);
 }
 
 MainWindow::~MainWindow()
@@ -201,6 +205,11 @@ void MainWindow::onSoundBtn()
 {
     m_errorMsg->setText("");
     m_textToSpeech->fetchAudio(m_lineEdit->text());
+}
+
+void MainWindow::onTranslateBtn()
+{
+
 }
 
 void MainWindow::onSkipBtn()

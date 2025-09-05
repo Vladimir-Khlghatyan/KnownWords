@@ -12,5 +12,6 @@
         <file>icons/split.png</file>
         <file>icons/toggle_off.png</file>
         <file>icons/toggle_on.png</file>
+        <file>icons/translate.png</file>
     </qresource>
 </RCC>

@@ -19,6 +19,7 @@ set(PROJECT_SOURCES
 		texttospeech.hpp texttospeech.cpp
 		sourcedlg.hpp sourcedlg.cpp
 		lineeditreadonly.hpp lineeditreadonly.cpp
+		armeniantranslator.hpp armeniantranslator.cpp
 		define.hpp
 		res.qrc
 )
