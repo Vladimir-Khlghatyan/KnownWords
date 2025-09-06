@@ -293,6 +293,7 @@ void MainWindow::onEditingFinished()
     }
 
     m_currWordVec[m_currIndex] = m_lineEdit->text().toStdString();
+    m_translatedText->setText("...");
 }
 
 void MainWindow::updateMessage(int known, int total)
@@ -341,6 +342,7 @@ void MainWindow::showRandomWord()
 void MainWindow::showRandomWord(int index)
 {
     m_lineEdit->setText(m_currWordVec[index].c_str());
+    m_translatedText->setText("...");
 }
 
 void MainWindow::save()
