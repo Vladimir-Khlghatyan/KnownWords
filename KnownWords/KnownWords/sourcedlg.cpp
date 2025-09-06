@@ -31,6 +31,7 @@ SourceDlg::SourceDlg(QWidget* parent)
     connect(m_caseBtn, &QPushButton::clicked, this, &SourceDlg::onCase);
 
     m_caseText = new QLabel("case insensitive");
+    m_caseText->setProperty("infoKey", true);
 
     m_cancelBtn = new QPushButton("Cancel");
     m_cancelBtn->setCursor(Qt::PointingHandCursor);
