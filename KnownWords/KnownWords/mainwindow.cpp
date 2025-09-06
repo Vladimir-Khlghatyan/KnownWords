@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_currWordCnt(0)
     , m_currKnownCnt(0)
     , m_currIndex(-1)
+
 {
     setWindowTitle("Known Words");
     setWindowIcon(QIcon(":/icons/logo.png"));
@@ -50,6 +51,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_lineEdit = new LineEditReadOnly();
     m_lineEdit->setToolTip("Double click to edit.");
+
+    m_translatedText = new QLabel();
+    m_translatedText->setProperty("translate", true);
+    m_translatedText->setAlignment(Qt::AlignCenter);
+    m_translatedText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
     showRandomWord();
 
     m_sourceBtn = getButtonWithIcon("source", "Add new source");
@@ -99,12 +106,6 @@ MainWindow::MainWindow(QWidget *parent)
     btnLayout->addWidget(m_knownBtn, Qt::AlignTop);
     btnLayout->addStretch();
 
-    m_translatedText = new QLabel();
-    m_translatedText->setProperty("translate", true);
-    m_translatedText->setAlignment(Qt::AlignCenter);
-    m_translatedText->setText("---");
-    m_translatedText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
     m_errorMsg = new QLabel();
     m_errorMsg->setProperty("error", true);
 
@@ -120,6 +121,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    save();
 }
 
 QPushButton* MainWindow::getButtonWithIcon(const QString& iconName, const QString& tooltip,
@@ -167,16 +169,16 @@ std::string MainWindow::getExecutableGrandparentDirPath()
 
 void MainWindow::parseKnownWords()
 {
-    std::ifstream sourceFile(getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt");
+    std::ifstream inFile(getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt");
 
-    if (!sourceFile.is_open())
+    if (!inFile.is_open())
     {
         // "Failed to open the file."
         return;
     }
 
     std::string lineStr;
-    while (std::getline(sourceFile, lineStr))
+    while (std::getline(inFile, lineStr))
     {
         if (lineStr.empty()) {
             continue;
@@ -223,7 +225,7 @@ void MainWindow::onTranslateBtn()
 void MainWindow::onSkipBtn()
 {
     if (m_currIndex ==-1 || m_currWordVec.size() < 2) {
-        onErrorMsg("This is the last word in the current set.");
+        onErrorMsg("There are no words left.");
         return;
     }
 
@@ -234,7 +236,6 @@ void MainWindow::onSkipBtn()
     }
 
     showRandomWord(m_currIndex);
-    m_translatedText->setText("");
 }
 void MainWindow::onLaterBtn()
 {
@@ -242,11 +243,20 @@ void MainWindow::onLaterBtn()
 }
 void MainWindow::onDeleteBtn()
 {
+    if (m_currIndex ==-1 || m_currWordVec.empty()) {
+        onErrorMsg("There is nothing to delete.");
+        return;
+    }
 
+    std::swap(m_currWordVec[m_currIndex], m_currWordVec.back());
+    m_currWordVec.pop_back();
+    updateMessage(m_currKnownCnt, --m_currWordCnt);
+    showRandomWord();
 }
 void MainWindow::onKnownBtn()
 {
     if (m_currIndex == -1) {
+        onErrorMsg("There is nothing to add to the known set of words.");
         return;
     }
 
@@ -257,11 +267,8 @@ void MainWindow::onKnownBtn()
 
         std::swap(m_currWordVec[m_currIndex], m_currWordVec.back());
         m_currWordVec.pop_back();
-
         updateMessage(++m_currKnownCnt, m_currWordCnt);
         showRandomWord();
-
-        m_translatedText->setText("");
     }
 }
 
@@ -318,9 +325,37 @@ void MainWindow::showRandomWord()
         m_currIndex = getRandomNumber(0, m_currWordVec.size() - 1);
         m_lineEdit->setText(m_currWordVec[m_currIndex].c_str());
     }
+    m_translatedText->setText("...");
 }
 
 void MainWindow::showRandomWord(int index)
 {
     m_lineEdit->setText(m_currWordVec[index].c_str());
+}
+
+void MainWindow::save()
+{
+    std::fstream outFile(getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt",
+                          std::ios::in | std::ios::out | std::ios::app);
+
+    if (!outFile.is_open())
+    {
+        // "Failed to open the file."
+        return;
+    }
+
+    outFile.seekg(-1, std::ios::end);
+    char lastChar;
+    outFile.get(lastChar);
+
+    if (lastChar != '\n')
+    {
+        outFile.clear(); // reset EOF/fail flags
+        outFile.seekp(0, std::ios::end);
+        outFile.put('\n');
+    }
+
+    for (const auto& word : m_newKnownWordVec) {
+        outFile << word << std::endl;
+    }
 }

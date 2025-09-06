@@ -35,9 +35,10 @@ private:
     std::string getExecutableGrandparentDirPath();
     void parseKnownWords();
     void updateMessage(int known = 0, int total = 0);
-    int getRandomNumber(int lower, int upper);
+    int  getRandomNumber(int lower, int upper);
     void showRandomWord();
     void showRandomWord(int index);
+    void save();
 
 private slots:
     void onSourceBtn();
