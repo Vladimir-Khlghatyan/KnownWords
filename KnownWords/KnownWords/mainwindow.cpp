@@ -51,6 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_lineEdit = new LineEditReadOnly();
     m_lineEdit->setToolTip("Double click to edit.");
+    connect(m_lineEdit, &QLineEdit::editingFinished, this, &MainWindow::onEditingFinished);
 
     m_translatedText = new QLabel();
     m_translatedText->setProperty("translate", true);
@@ -283,6 +284,15 @@ void MainWindow::onErrorMsg(const QString& msg)
 void MainWindow::onTranslationReady(const QString& translatedText)
 {
     m_translatedText->setText(translatedText);
+}
+
+void MainWindow::onEditingFinished()
+{
+    if (m_currIndex == -1) {
+        return;
+    }
+
+    m_currWordVec[m_currIndex] = m_lineEdit->text().toStdString();
 }
 
 void MainWindow::updateMessage(int known, int total)

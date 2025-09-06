@@ -50,6 +50,7 @@ private slots:
     void onKnownBtn();
     void onErrorMsg(const QString& msg);
     void onTranslationReady(const QString& translatedText);
+    void onEditingFinished();
 
 private:
     QPushButton* m_sourceBtn;

@@ -64,6 +64,14 @@ QPushButton[iconButton="true"]
     min-width:        30px;
     max-width:        30px;
 }
+QPushButton[toggleButton="true"]
+{
+    background-color: #272727;
+    min-width:        30px;
+    max-width:        30px;
+    min-height:       20px;
+    max-height:       20px;
+}
 QToolTip
 {
     border:     1px solid #9B9C9C;

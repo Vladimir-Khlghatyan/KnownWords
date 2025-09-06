@@ -1,6 +1,8 @@
 #ifndef SOURCEDLG_HPP
 #define SOURCEDLG_HPP
 
+#include "lineeditreadonly.hpp"
+
 #include <QDialog>
 #include <QString>
 
@@ -9,7 +11,7 @@
 
 class QPushButton;
 class QLabel;
-class QTextEdit;
+class PlainTextEdit;
 
 class SourceDlg : public QDialog
 {
@@ -21,13 +23,17 @@ public:
     const std::unordered_set<std::string>& getWords() const { return m_wordSet; }
 
 private slots:
+    void onCase();
     void onCencel();
     void onOk();
 
 private:
-    QTextEdit*   m_textEdit;
-    QPushButton* m_cancelBtn;
-    QPushButton* m_okBtn;
+    PlainTextEdit* m_textEdit;
+    QLabel*        m_caseText;
+    QPushButton*   m_caseBtn;
+    QPushButton*   m_cancelBtn;
+    QPushButton*   m_okBtn;
+    bool           m_isCaseInsensitive;
     std::unordered_set<std::string> m_wordSet;
 };
 

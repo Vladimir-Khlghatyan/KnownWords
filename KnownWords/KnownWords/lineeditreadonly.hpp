@@ -2,6 +2,8 @@
 #define LINEEDITREADONLY_HPP
 
 #include <QLineEdit>
+#include <QTextEdit>
+#include <QMimeData>
 
 class QWidget;
 class QMouseEvent;
@@ -25,6 +27,23 @@ protected:
 
 protected slots:
     void onEditingFinished();
+};
+
+////////////////////////////////////////////////////
+
+class PlainTextEdit : public QTextEdit
+{
+    Q_OBJECT
+public:
+    using QTextEdit::QTextEdit; // inherit constructors
+
+protected:
+    void insertFromMimeData(const QMimeData *source) override {
+        if (source->hasText()) {
+            insertPlainText(source->text()); // paste only plain text
+        }
+        // ignore everything else
+        }
 };
 
 #endif // LINEEDITREADONLY_HPP
