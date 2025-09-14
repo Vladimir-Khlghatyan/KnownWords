@@ -35,17 +35,25 @@ MainWindow::MainWindow(QWidget *parent)
     setStyleSheet(MAIN_WINDOW_STYLE);
     setFixedSize(QSize(400, 300));
 
-    m_knownWordSet = parseWordSource("/WordSource/KnownWords.txt");
-    m_laterWordSet = parseWordSource("/WordSource/ForLater.txt");
+    m_knownFilePath = getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt";
+    m_laterFilePath = getExecutableGrandparentDirPath() + "/WordSource/ForLater.txt";
 
-    m_totalKnownMsg = addMessage("Total Known Words:");
-    m_sourceMsg = addMessage("Current Source:");
-    m_percentMsg = addMessage("Known Percentage:");
-    m_forLaterMsg = addMessage("For Later:");
+    m_knownWordSet = parseWordSource(m_knownFilePath);
+    m_laterWordSet = parseWordSource(m_laterFilePath);
+
+    m_totalKnownMsg = addMessage("Total Known Words:").first;
+    m_sourceMsg = addMessage("Current Source:").first;
+    m_percentMsg = addMessage("Known Percentage:").first;
+    m_forLaterBtn = addMessage("For Later:", true).second;
 
     m_sourceMsg->setToolTip("Known / Total");
     m_percentMsg->setToolTip("Current known / Total known * 100%");
-    m_forLaterMsg->setToolTip("Words to learn later.");
+    m_forLaterBtn->setToolTip(QString("Words to learn later.%1%2")
+                                .arg("\n - Click to sync with knows words.",
+                                     "\n - Double click to sync and load words to learn."));
+    connect(m_forLaterBtn, &MyButton::singleClicked, this, &MainWindow::onLaterBtnSingleClick);
+    connect(m_forLaterBtn, &MyButton::doubleClicked, this, &MainWindow::onLaterBtnDoubleClick);
+
     updateMessage();
 
     m_lineEdit = new LineEditReadOnly();
@@ -132,8 +140,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    save(m_newKnownWordVec, "/WordSource/KnownWords.txt");
-    save(m_newLaterWordVec, "/WordSource/ForLater.txt");
+    save(m_newKnownWordVec, m_knownFilePath);
+    save(m_newLaterWordVec, m_laterFilePath);
 }
 
 QPushButton* MainWindow::getButtonWithIcon(const QString& iconName, const QString& tooltip,
@@ -150,22 +158,36 @@ QPushButton* MainWindow::getButtonWithIcon(const QString& iconName, const QStrin
     return btn;
 }
 
-QLabel* MainWindow::addMessage(const char* keyMessage)
+MainWindow::InfoPair MainWindow::addMessage(const char* keyMessage, bool isButton)
 {
-    QLabel* keyLabel = new QLabel(keyMessage);
-    QLabel* valLabel = new QLabel();
-
-    keyLabel->setProperty("infoKey", true);
-    valLabel->setProperty("infoVal", true);
-
     QHBoxLayout* hLayout = new QHBoxLayout();
     hLayout->setContentsMargins(0,0,0,0);
     hLayout->setSpacing(8);
+
+    QLabel* keyLabel = new QLabel(keyMessage);
+    keyLabel->setProperty("infoKeyLabel", true);
     hLayout->addWidget(keyLabel);
-    hLayout->addWidget(valLabel, Qt::AlignLeft);
+
+    QLabel* valLabel{};
+    MyButton* valBtn{};
+
+    if (isButton)
+    {
+        valBtn = new MyButton();
+        valBtn->setProperty("infoValButton", true);
+        valBtn->setCursor(Qt::PointingHandCursor);
+        hLayout->addWidget(valBtn, Qt::AlignLeft);
+        hLayout->addStretch();
+    }
+    else
+    {
+        valLabel = new QLabel();
+        valLabel->setProperty("infoValLabel", true);
+        hLayout->addWidget(valLabel, Qt::AlignLeft);
+    }
 
     m_infoLayout->addLayout(hLayout);
-    return valLabel;
+    return {valLabel, valBtn};
 }
 
 std::string MainWindow::getExecutableGrandparentDirPath()
@@ -179,7 +201,7 @@ std::string MainWindow::getExecutableGrandparentDirPath()
 
 MainWindow::WordSet MainWindow::parseWordSource(const std::string& inFile)
 {
-    std::ifstream file(getExecutableGrandparentDirPath() + inFile);
+    std::ifstream file(inFile);
 
     if (!file)
     {
@@ -293,6 +315,21 @@ void MainWindow::onKnownBtn()
     }
 }
 
+void MainWindow::onLaterBtnSingleClick()
+{
+    sync();
+    updateMessage(m_currKnownCnt, m_currWordCnt);
+}
+
+void MainWindow::onLaterBtnDoubleClick()
+{
+    sync();
+    save(m_newKnownWordVec, m_knownFilePath);
+    loadWordsFromLaterSet();
+    updateMessage(m_currKnownCnt, m_currWordCnt);
+    showRandomWord();
+}
+
 void MainWindow::onErrorMsg(const QString& msg)
 {
     m_errorMsg->setText(msg);
@@ -337,7 +374,7 @@ void MainWindow::updateMessage(int known, int total)
     if (m_laterWordCnt != m_laterWordSet.size() || m_laterWordCnt == 0)
     {
         m_laterWordCnt = m_laterWordSet.size();
-        m_forLaterMsg->setText(QString::number(m_laterWordCnt));
+        m_forLaterBtn->setText(QString::number(m_laterWordCnt));
     }
 }
 
@@ -370,10 +407,9 @@ void MainWindow::showRandomWord(int index)
     m_translatedText->setText("");
 }
 
-void MainWindow::save(const WordVec& src, const std::string& outFile)
+void MainWindow::save(WordVec& src, const std::string& outFile)
 {
-    std::fstream file(getExecutableGrandparentDirPath() + outFile,
-                          std::ios::in | std::ios::out | std::ios::app | std::ios::binary);
+    std::fstream file(outFile, std::ios::in | std::ios::out | std::ios::app | std::ios::binary);
 
     if (!file.is_open())
     {
@@ -395,4 +431,31 @@ void MainWindow::save(const WordVec& src, const std::string& outFile)
     for (const auto& word : src) {
         file << word << '\n';
     }
+
+    src.clear();
+}
+
+void MainWindow::sync()
+{
+    const size_t oldSize = m_laterWordSet.size();
+    for (auto it = m_laterWordSet.begin(); it != m_laterWordSet.end(); ) {
+        it = (m_knownWordSet.count(*it) > 0) ? m_laterWordSet.erase(it) : std::next(it);
+    }
+
+    if (oldSize != m_laterWordSet.size())
+    {
+        m_newLaterWordVec.clear();
+        std::ofstream file(m_laterFilePath, std::ios::trunc | std::ios::binary);
+
+        for (const std::string& word : m_laterWordSet) {
+            file << word << '\n';
+        }
+    }
+}
+
+void MainWindow::loadWordsFromLaterSet()
+{
+    m_currWordVec = WordVec(m_laterWordSet.begin(), m_laterWordSet.end());
+    m_currWordCnt = m_currWordVec.size();
+    m_currKnownCnt = 0;
 }

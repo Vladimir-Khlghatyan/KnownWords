@@ -15,11 +15,13 @@ class QLineEdit;
 class LineEditReadOnly;
 class TextToSpeech;
 class ArmenianTranslator;
+class MyButton;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    using InfoPair = std::pair<QLabel*, MyButton*>;
     using WordSet = std::unordered_set<std::string>;
     using WordVec = std::vector<std::string>;
 
@@ -34,14 +36,16 @@ private:
                                     const QSize& buttonSize = QSize(30, 30),
                                     const QSize& iconSize = QSize(24, 24));
 
-    QLabel* addMessage(const char* keyMessage);
+    InfoPair addMessage(const char* keyMessage, bool isButton = false);
     std::string getExecutableGrandparentDirPath();
     WordSet parseWordSource(const std::string& inFile);
     void updateMessage(int known = 0, int total = 0);
     int  getRandomNumber(int lower, int upper);
     void showRandomWord();
     void showRandomWord(int index);
-    void save(const WordVec& src, const std::string& outFile);
+    void save(WordVec& src, const std::string& outFile);
+    void sync();
+    void loadWordsFromLaterSet();
 
 private slots:
     void onSourceBtn();
@@ -51,11 +55,16 @@ private slots:
     void onLaterBtn();
     void onDeleteBtn();
     void onKnownBtn();
+    void onLaterBtnSingleClick();
+    void onLaterBtnDoubleClick();
     void onErrorMsg(const QString& msg);
     void onTranslationReady(const QString& translatedText);
     void onEditingFinished();
 
 private:
+    std::string m_knownFilePath;
+    std::string m_laterFilePath;
+
     QPushButton* m_sourceBtn;
     QPushButton* m_soundBtn;
     QPushButton* m_translateBtn;
@@ -63,11 +72,11 @@ private:
     QPushButton* m_laterBtn;
     QPushButton* m_deleteBtn;
     QPushButton* m_knownBtn;
+    MyButton*    m_forLaterBtn;
     QVBoxLayout* m_infoLayout;
     QLabel*      m_totalKnownMsg;
     QLabel*      m_sourceMsg;
     QLabel*      m_percentMsg;
-    QLabel*      m_forLaterMsg;
     QLabel*      m_translatedText;
     QLabel*      m_errorMsg;
 

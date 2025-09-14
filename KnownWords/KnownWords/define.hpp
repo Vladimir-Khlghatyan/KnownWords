@@ -20,12 +20,12 @@ QLabel
     font-size:   16px;
     color:       white;
 }
-QLabel[infoKey="true"]
+QLabel[infoKeyLabel="true"]
 {
     font-style: italic;
     color:      #BFBFBF;
 }
-QLabel[infoVal="true"]
+QLabel[infoValLabel="true"]
 {
     font-weight: bold;
     color:       #BFBFBF;
@@ -74,6 +74,18 @@ QPushButton[toggleButton="true"]
     max-width:        30px;
     min-height:       20px;
     max-height:       20px;
+}
+QPushButton[infoValButton="true"]
+{
+    background-color: #272727;
+    color:            #BFBFBF;
+    font-weight:      bold;
+    min-width:        30px;
+    max-width:        30px;
+}
+QPushButton:hover[infoValButton="true"]
+{
+    text-decoration: underline;
 }
 QToolTip
 {

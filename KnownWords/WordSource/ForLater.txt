@@ -1,6 +1,5 @@
-permanent
-bullet
-council
-curve
 shade
-mad
+curve
+council
+bullet
+permanent
