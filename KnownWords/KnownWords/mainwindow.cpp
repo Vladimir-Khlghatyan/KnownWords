@@ -22,7 +22,9 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
+    , m_infoLayout(new QVBoxLayout())
     , m_knownWordCnt(0)
+    , m_laterWordCnt(0)
     , m_currWordCnt(0)
     , m_currKnownCnt(0)
     , m_currIndex(-1)
@@ -40,13 +42,17 @@ MainWindow::MainWindow(QWidget *parent)
     layout->setContentsMargins(8,8,8,8);
     layout->setSpacing(4);
 
-    parseKnownWords();
+    m_knownWordSet = parseWordSource("/WordSource/KnownWords.txt");
+    m_laterWordSet = parseWordSource("/WordSource/ForLater.txt");
 
-    m_infoLayout = new QVBoxLayout();
     m_totalKnownMsg = addMessage("Total Known Words:");
     m_sourceMsg = addMessage("Current Source:");
-    m_sourceMsg->setToolTip("known / total");
     m_percentMsg = addMessage("Known Percentage:");
+    m_forLaterMsg = addMessage("For Later:");
+
+    m_sourceMsg->setToolTip("Known / Total");
+    m_percentMsg->setToolTip("Current known / Total known * 100%");
+    m_forLaterMsg->setToolTip("Words to learn later.");
     updateMessage();
 
     m_lineEdit = new LineEditReadOnly();
@@ -122,7 +128,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    save();
+    save(m_newKnownWordVec, "/WordSource/KnownWords.txt");
+    save(m_newLaterWordVec, "/WordSource/ForLater.txt");
 }
 
 QPushButton* MainWindow::getButtonWithIcon(const QString& iconName, const QString& tooltip,
@@ -151,11 +158,9 @@ QLabel* MainWindow::addMessage(const char* keyMessage)
     hLayout->setContentsMargins(0,0,0,0);
     hLayout->setSpacing(8);
     hLayout->addWidget(keyLabel);
-    hLayout->addWidget(valLabel);
+    hLayout->addWidget(valLabel, Qt::AlignLeft);
 
-    if (m_infoLayout) {
-        m_infoLayout->addLayout(hLayout);
-    }
+    m_infoLayout->addLayout(hLayout);
     return valLabel;
 }
 
@@ -168,24 +173,25 @@ std::string MainWindow::getExecutableGrandparentDirPath()
     return grandparentDirPath.toStdString();
 }
 
-void MainWindow::parseKnownWords()
+MainWindow::WordSet MainWindow::parseWordSource(const std::string& inFile)
 {
-    std::ifstream inFile(getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt");
+    std::ifstream file(getExecutableGrandparentDirPath() + inFile);
 
-    if (!inFile.is_open())
+    if (!file)
     {
         // "Failed to open the file."
-        return;
+        return {};
     }
 
+    MainWindow::WordSet ws;
     std::string lineStr;
-    while (std::getline(inFile, lineStr))
-    {
-        if (lineStr.empty()) {
-            continue;
+    while (std::getline(file, lineStr)) {
+        if (!lineStr.empty()) {
+            ws.insert(std::move(lineStr));
         }
-        m_knownWordSet.insert(lineStr);
     }
+
+    return ws;
 }
 
 void MainWindow::onSourceBtn()
@@ -226,7 +232,7 @@ void MainWindow::onTranslateBtn()
 void MainWindow::onSkipBtn()
 {
     if (m_currIndex ==-1 || m_currWordVec.size() < 2) {
-        onErrorMsg("There are no words left.");
+        onErrorMsg("No word to skip.");
         return;
     }
 
@@ -240,12 +246,22 @@ void MainWindow::onSkipBtn()
 }
 void MainWindow::onLaterBtn()
 {
+    if (m_currIndex == -1) {
+        onErrorMsg("No word to laern later.");
+        return;
+    }
 
+    const auto success = m_laterWordSet.insert(m_currWordVec[m_currIndex]);
+    if (success.second == true) {
+        m_newLaterWordVec.push_back(m_currWordVec[m_currIndex]);
+    }
+
+    onDeleteBtn();
 }
 void MainWindow::onDeleteBtn()
 {
     if (m_currIndex ==-1 || m_currWordVec.empty()) {
-        onErrorMsg("There is nothing to delete.");
+        onErrorMsg("No word to delete.");
         return;
     }
 
@@ -257,7 +273,7 @@ void MainWindow::onDeleteBtn()
 void MainWindow::onKnownBtn()
 {
     if (m_currIndex == -1) {
-        onErrorMsg("There is nothing to add to the known set of words.");
+        onErrorMsg("No word to add in the known words' set.");
         return;
     }
 
@@ -301,8 +317,7 @@ void MainWindow::updateMessage(int known, int total)
     if (m_knownWordCnt != m_knownWordSet.size())
     {
         m_knownWordCnt = m_knownWordSet.size();
-        const QString totalKnownMsg = QString::number(m_knownWordCnt);
-        m_totalKnownMsg->setText(totalKnownMsg);
+        m_totalKnownMsg->setText(QString::number(m_knownWordCnt));
     }
 
     const QString sourceMsg = QString::number(known) + " / " + QString::number(total);
@@ -313,6 +328,12 @@ void MainWindow::updateMessage(int known, int total)
     } else {
         const QString percentMsg = QString::number(static_cast<double>(known) / total * 100, 'f', 1) + "%";
         m_percentMsg->setText(percentMsg);
+    }
+
+    if (m_laterWordCnt != m_laterWordSet.size() || m_laterWordCnt == 0)
+    {
+        m_laterWordCnt = m_laterWordSet.size();
+        m_forLaterMsg->setText(QString::number(m_laterWordCnt));
     }
 }
 
@@ -345,29 +366,29 @@ void MainWindow::showRandomWord(int index)
     m_translatedText->setText("...");
 }
 
-void MainWindow::save()
+void MainWindow::save(const WordVec& src, const std::string& outFile)
 {
-    std::fstream outFile(getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt",
-                          std::ios::in | std::ios::out | std::ios::app);
+    std::fstream file(getExecutableGrandparentDirPath() + outFile,
+                          std::ios::in | std::ios::out | std::ios::app | std::ios::binary);
 
-    if (!outFile.is_open())
+    if (!file.is_open())
     {
         // "Failed to open the file."
         return;
     }
 
-    outFile.seekg(-1, std::ios::end);
+    file.seekg(-1, std::ios::end);
     char lastChar;
-    outFile.get(lastChar);
+    file.get(lastChar);
 
     if (lastChar != '\n')
     {
-        outFile.clear(); // reset EOF/fail flags
-        outFile.seekp(0, std::ios::end);
-        outFile.put('\n');
+        file.clear(); // reset EOF/fail flags
+        file.seekp(0, std::ios::end);
+        file.put('\n');
     }
 
-    for (const auto& word : m_newKnownWordVec) {
-        outFile << word << std::endl;
+    for (const auto& word : src) {
+        file << word << '\n';
     }
 }

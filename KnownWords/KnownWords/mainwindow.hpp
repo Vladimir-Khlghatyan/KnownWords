@@ -20,6 +20,9 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    using WordSet = std::unordered_set<std::string>;
+    using WordVec = std::vector<std::string>;
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -33,12 +36,12 @@ private:
 
     QLabel* addMessage(const char* keyMessage);
     std::string getExecutableGrandparentDirPath();
-    void parseKnownWords();
+    WordSet parseWordSource(const std::string& inFile);
     void updateMessage(int known = 0, int total = 0);
     int  getRandomNumber(int lower, int upper);
     void showRandomWord();
     void showRandomWord(int index);
-    void save();
+    void save(const WordVec& src, const std::string& outFile);
 
 private slots:
     void onSourceBtn();
@@ -64,16 +67,20 @@ private:
     QLabel*      m_totalKnownMsg;
     QLabel*      m_sourceMsg;
     QLabel*      m_percentMsg;
+    QLabel*      m_forLaterMsg;
     QLabel*      m_translatedText;
     QLabel*      m_errorMsg;
 
     LineEditReadOnly* m_lineEdit;
 
-    std::unordered_set<std::string> m_knownWordSet;
-    std::vector<std::string> m_currWordVec;
-    std::vector<std::string> m_newKnownWordVec;
+    WordSet m_knownWordSet;
+    WordSet m_laterWordSet;
+    WordVec m_currWordVec;
+    WordVec m_newKnownWordVec;
+    WordVec m_newLaterWordVec;
 
     int m_knownWordCnt;
+    int m_laterWordCnt;
     int m_currWordCnt;
     int m_currKnownCnt;
     int m_currIndex;

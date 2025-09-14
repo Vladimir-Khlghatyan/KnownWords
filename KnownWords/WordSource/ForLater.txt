@@ -1,0 +1,5 @@
+permanent
+bullet
+council
+curve
+shade
