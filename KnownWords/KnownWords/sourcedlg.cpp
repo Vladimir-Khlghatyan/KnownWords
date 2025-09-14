@@ -14,10 +14,11 @@
 SourceDlg::SourceDlg(QWidget* parent)
     : baseClass(parent)
     , m_isCaseInsensitive(true)
+    , m_laterSkipMode(false)
 {
     setWindowIcon(QIcon(":/icons/source.png"));
     setWindowTitle("Add source");
-    setMinimumSize(400,100);
+    setMinimumSize(450,100);
 
     m_textEdit = new PlainTextEdit();
     m_textEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -33,6 +34,22 @@ SourceDlg::SourceDlg(QWidget* parent)
     m_caseText = new QLabel("case insensitive");
     m_caseText->setProperty("infoKey", true);
 
+    m_laterBtn = new QPushButton();
+    m_laterBtn->setIcon(QIcon(":/icons/toggle_off.png"));
+    m_laterBtn->setProperty("toggleButton", true);
+    m_laterBtn->setIconSize(QSize(30, 30));
+    m_laterBtn->setCursor(Qt::PointingHandCursor);
+    connect(m_laterBtn, &QPushButton::clicked, this, &SourceDlg::onLater);
+
+    m_laterText = new QLabel("take words from Later set");
+    m_laterText->setProperty("infoKey", true);
+
+    QGridLayout* gLayout = new QGridLayout();
+    gLayout->addWidget(m_caseBtn,   0, 0, 1, 1);
+    gLayout->addWidget(m_caseText,  0, 1, 1, 1);
+    gLayout->addWidget(m_laterBtn,  1, 0, 1, 1);
+    gLayout->addWidget(m_laterText, 1, 1, 1, 1);
+
     m_cancelBtn = new QPushButton("Cancel");
     m_cancelBtn->setCursor(Qt::PointingHandCursor);
     connect(m_cancelBtn, &QPushButton::clicked, this, &SourceDlg::onCencel);
@@ -42,8 +59,9 @@ SourceDlg::SourceDlg(QWidget* parent)
     connect(m_okBtn, &QPushButton::clicked, this, &SourceDlg::onOk);
 
     QHBoxLayout* hLayout = new QHBoxLayout();
-    hLayout->addWidget(m_caseBtn);
-    hLayout->addWidget(m_caseText);
+    /*hLayout->addWidget(m_caseBtn);
+    hLayout->addWidget(m_caseText)*/;
+    hLayout->addLayout(gLayout);
     hLayout->addStretch();
     hLayout->addWidget(m_cancelBtn);
     hLayout->addWidget(m_okBtn);
@@ -70,6 +88,22 @@ void SourceDlg::onCase()
     }
 }
 
+void SourceDlg::onLater()
+{
+    m_laterSkipMode = !m_laterSkipMode;
+    if (m_laterSkipMode)
+    {
+        m_laterBtn->setIcon(QIcon(":/icons/toggle_on.png"));
+        m_laterText->setText("skip words from Later set");
+    }
+    else
+    {
+        m_laterBtn->setIcon(QIcon(":/icons/toggle_off.png"));
+        m_laterText->setText("take words from Later set");
+    }
+}
+
+
 void SourceDlg::onCencel()
 {
     reject();
@@ -95,4 +129,10 @@ void SourceDlg::onOk()
     }
 
     accept();
+}
+
+bool SourceDlg::isLaterSkipMode() const
+{
+    const QString text = m_laterText->text();
+    return text[0] == QChar('s');
 }

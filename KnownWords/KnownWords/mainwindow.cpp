@@ -226,17 +226,32 @@ void MainWindow::onSourceBtn()
     if (dlg.exec() == QDialog::Accepted)
     {
         const auto& words = dlg.getWords();
+        const bool isSkipMode = dlg.isLaterSkipMode();
+        int skipCnt{};
         m_currWordVec.clear();
 
-        for (const auto& word : words) {
-
-            if (m_knownWordSet.count(word) == 0) {
-                m_currWordVec.push_back(word);
+        if (isSkipMode)
+        {
+            for (const auto& word : words)
+            {
+                if (m_laterWordSet.count(word) > 0) {
+                    ++skipCnt;
+                } else if (m_knownWordSet.count(word) == 0) {
+                    m_currWordVec.push_back(word);
+                }
+            }
+        }
+        else
+        {
+            for (const auto& word : words) {
+                if (m_knownWordSet.count(word) == 0) {
+                    m_currWordVec.push_back(word);
+                }
             }
         }
 
         m_currWordCnt = words.size();
-        m_currKnownCnt = words.size() - m_currWordVec.size();
+        m_currKnownCnt = words.size() - m_currWordVec.size() - skipCnt;
 
         updateMessage(m_currKnownCnt, m_currWordCnt);
         showRandomWord();
