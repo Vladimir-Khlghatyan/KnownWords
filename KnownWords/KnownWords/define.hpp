@@ -42,7 +42,10 @@ QLabel[error="true"]
 }
 QLabel[translate="true"]
 {
-    font-size: 24px;
+    border:         1px solid #5E5E5E;
+    border-radius:  5px;
+    font-size:      20px;
+    color:          #BFBFBF;
 }
 QPushButton
 {
@@ -81,9 +84,10 @@ QToolTip
 }
 QTextEdit
 {
-    border:     1px solid #9B9C9C;
-    background: #2e2f30;
-    color:      white;
+    border:         1px solid #9B9C9C;
+    border-radius:  5px;
+    background:     #2e2f30;
+    color:          white;
 }
 QLineEdit
 {

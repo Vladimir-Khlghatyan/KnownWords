@@ -35,13 +35,6 @@ MainWindow::MainWindow(QWidget *parent)
     setStyleSheet(MAIN_WINDOW_STYLE);
     setFixedSize(QSize(400, 300));
 
-    // setup Main Window layout
-    QWidget* centralWidget = new QWidget();
-    setCentralWidget(centralWidget);
-    QGridLayout* layout = new QGridLayout(centralWidget);
-    layout->setContentsMargins(8,8,8,8);
-    layout->setSpacing(4);
-
     m_knownWordSet = parseWordSource("/WordSource/KnownWords.txt");
     m_laterWordSet = parseWordSource("/WordSource/ForLater.txt");
 
@@ -61,8 +54,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_translatedText = new QLabel();
     m_translatedText->setProperty("translate", true);
-    m_translatedText->setAlignment(Qt::AlignCenter);
-    m_translatedText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_translatedText->setFixedSize(4 * 80 + 3 * 4, 36);
+    m_translatedText->setAlignment(Qt::AlignHCenter);
 
     showRandomWord();
 
@@ -116,14 +109,25 @@ MainWindow::MainWindow(QWidget *parent)
     m_errorMsg = new QLabel();
     m_errorMsg->setProperty("error", true);
 
-    layout->addLayout(m_infoLayout,   0, 0, 3, 1, Qt::AlignLeft | Qt::AlignTop);
-    layout->addWidget(m_lineEdit,     3, 0, 1, 2, Qt::AlignVCenter);
-    layout->addWidget(m_sourceBtn,    0, 1, 1, 1, Qt::AlignRight);
-    layout->addWidget(m_soundBtn,     1, 1, 1, 1, Qt::AlignRight);
-    layout->addWidget(m_translateBtn, 2, 1, 1, 1, Qt::AlignRight);
-    layout->addLayout(btnLayout,      4, 0, 1, 2);
-    layout->addWidget(m_translatedText, 5, 0, 1, 2);
-    layout->addWidget(m_errorMsg,     6, 0, 1, 1, Qt::AlignLeft);
+    // setup Main Window layout
+    QWidget* centralWidget = new QWidget();
+    setCentralWidget(centralWidget);
+    QGridLayout* layout = new QGridLayout(centralWidget);
+    layout->setContentsMargins(8,8,8,8);
+    layout->setSpacing(4);
+
+    QWidget* spacing = new QWidget();
+    spacing->setFixedHeight(8);
+
+    layout->addLayout(m_infoLayout,     0, 0, 3, 1, Qt::AlignLeft | Qt::AlignTop);
+    layout->addWidget(m_lineEdit,       3, 0, 1, 2, Qt::AlignVCenter);
+    layout->addWidget(m_sourceBtn,      0, 1, 1, 1, Qt::AlignRight);
+    layout->addWidget(m_soundBtn,       1, 1, 1, 1, Qt::AlignRight);
+    layout->addWidget(m_translateBtn,   2, 1, 1, 1, Qt::AlignRight);
+    layout->addLayout(btnLayout,        4, 0, 1, 2);
+    layout->addWidget(spacing,          5, 0, 1, 2);
+    layout->addWidget(m_translatedText, 6, 0, 1, 2, Qt::AlignHCenter);
+    layout->addWidget(m_errorMsg,       7, 0, 1, 1, Qt::AlignLeft);
 }
 
 MainWindow::~MainWindow()
@@ -309,7 +313,7 @@ void MainWindow::onEditingFinished()
     }
 
     m_currWordVec[m_currIndex] = m_lineEdit->text().toStdString();
-    m_translatedText->setText("...");
+    m_translatedText->setText("");
 }
 
 void MainWindow::updateMessage(int known, int total)
@@ -357,13 +361,13 @@ void MainWindow::showRandomWord()
         m_currIndex = getRandomNumber(0, m_currWordVec.size() - 1);
         m_lineEdit->setText(m_currWordVec[m_currIndex].c_str());
     }
-    m_translatedText->setText("...");
+    m_translatedText->setText("");
 }
 
 void MainWindow::showRandomWord(int index)
 {
     m_lineEdit->setText(m_currWordVec[index].c_str());
-    m_translatedText->setText("...");
+    m_translatedText->setText("");
 }
 
 void MainWindow::save(const WordVec& src, const std::string& outFile)
