@@ -1227,3 +1227,8 @@ winner
 heat
 committee
 tolerate
+strategy
+mutual
+everywhere
+legal
+upper
