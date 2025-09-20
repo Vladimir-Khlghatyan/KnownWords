@@ -1875,3 +1875,4 @@ manager
 moves
 daily
 blocks
+pushes
