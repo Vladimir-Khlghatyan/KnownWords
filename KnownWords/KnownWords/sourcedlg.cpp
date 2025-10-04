@@ -116,16 +116,23 @@ void SourceDlg::onOk()
         return;
     }
 
-    static const QRegularExpression wsRegex("\\s+"), alphaRegex("[^A-Za-z]+$");
-    QStringList parts = text.split(wsRegex, Qt::SkipEmptyParts);
+    static const QRegularExpression whiteSpaceRegex("\\s+");
+    static const QRegularExpression startRegex("^[^A-Za-z]+");
+    static const QRegularExpression endRegex("[^A-Za-z]+$");
+    QStringList parts = text.split(whiteSpaceRegex, Qt::SkipEmptyParts);
 
     for (QString& part : parts)
     {
-        part.replace(alphaRegex, ""); // remove non non-letter characters from the end ($ = end of string)
-        if (m_isCaseInsensitive) {
-            part = part.toLower();
+        part.replace(startRegex, "");   // remove non-letter characters from the start
+        part.replace(endRegex, "");     // remove non-letter characters from the end
+
+        if (!part.isEmpty())
+        {
+            if (m_isCaseInsensitive) {
+                part = part.toLower();
+            }
+            m_wordSet.insert(part.toStdString());
         }
-        m_wordSet.insert(part.toStdString());
     }
 
     accept();
