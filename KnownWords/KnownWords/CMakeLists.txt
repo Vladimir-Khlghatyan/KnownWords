@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
 		sourcedlg.hpp sourcedlg.cpp
 		lineeditreadonly.hpp lineeditreadonly.cpp
 		armeniantranslator.hpp armeniantranslator.cpp
+		exportdlg.hpp exportdlg.cpp
 		define.hpp
 		res.qrc
 )

@@ -42,11 +42,11 @@ MainWindow::MainWindow(QWidget *parent)
     m_laterWordSet = parseWordSource(m_laterFilePath);
 
     m_totalKnownMsg = addMessage("Total Known Words:").first;
-    m_sourceMsg = addMessage("Current Source:").first;
+    m_sourceMsgBtn = addMessage("Current Source:", true).second;
     m_percentMsg = addMessage("Known Percentage:").first;
     m_forLaterBtn = addMessage("For Later:", true).second;
 
-    m_sourceMsg->setToolTip("Known / Total");
+    m_sourceMsgBtn->setToolTip("Known / Total");
     m_percentMsg->setToolTip("Current known / Total known * 100%");
     m_forLaterBtn->setToolTip(QString("Words to learn later.%1%2")
                                 .arg("\n - Click to sync with knows words.",
@@ -377,7 +377,7 @@ void MainWindow::updateMessage(int known, int total)
     }
 
     const QString sourceMsg = QString::number(known) + " / " + QString::number(total);
-    m_sourceMsg->setText(sourceMsg);
+    m_sourceMsgBtn->setButtonText(sourceMsg);
 
     if (total == 0) {
         m_percentMsg->setText("0.0%");
@@ -389,7 +389,7 @@ void MainWindow::updateMessage(int known, int total)
     if (m_laterWordCnt != m_laterWordSet.size() || m_laterWordCnt == 0)
     {
         m_laterWordCnt = m_laterWordSet.size();
-        m_forLaterBtn->setText(QString::number(m_laterWordCnt));
+        m_forLaterBtn->setButtonText(QString::number(m_laterWordCnt));
     }
 }
 

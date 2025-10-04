@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QFontMetrics>
 
 class QWidget;
 class QFocusEvent;
@@ -58,6 +59,12 @@ class MyButton : public QPushButton
     public:
         using QPushButton::QPushButton; // inherit constructors
 
+        void setButtonText(const QString& t)
+        {
+            QPushButton::setText(t);
+            QTimer::singleShot(0, this, [this]{ resizeToFit(); });
+        }
+
     signals:
         void singleClicked();
         void doubleClicked();
@@ -88,6 +95,14 @@ class MyButton : public QPushButton
             }
 
             QPushButton::mousePressEvent(event);
+        }
+
+    private:
+        void resizeToFit()
+        {
+            QFontMetrics fm(font());
+            const int w = fm.horizontalAdvance(text());
+            setFixedWidth(w);
         }
 
     private:

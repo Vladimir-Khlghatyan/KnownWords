@@ -80,8 +80,6 @@ QPushButton[infoValButton="true"]
     background-color: #272727;
     color:            #BFBFBF;
     font-weight:      bold;
-    min-width:        30px;
-    max-width:        30px;
 }
 QPushButton:hover[infoValButton="true"]
 {

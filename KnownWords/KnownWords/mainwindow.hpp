@@ -72,10 +72,10 @@ private:
     QPushButton* m_laterBtn;
     QPushButton* m_deleteBtn;
     QPushButton* m_knownBtn;
+    MyButton*    m_sourceMsgBtn;
     MyButton*    m_forLaterBtn;
     QVBoxLayout* m_infoLayout;
     QLabel*      m_totalKnownMsg;
-    QLabel*      m_sourceMsg;
     QLabel*      m_percentMsg;
     QLabel*      m_translatedText;
     QLabel*      m_errorMsg;
