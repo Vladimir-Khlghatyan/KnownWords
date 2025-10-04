@@ -16,14 +16,19 @@ public:
     ~ExportDlg(){}
 
 private slots:
+    void onBrowse();
     void onCencel();
-    void onSave();
+    void onExport();
+
+private:
+    QString getTxtFileOrDirectory();
 
 private:
     QLineEdit*   m_lineEdit;
     QLabel*      m_dirPath;
+    QPushButton* m_browseBtn;
     QPushButton* m_cancelBtn;
-    QPushButton* m_saveBtn;
+    QPushButton* m_exportBtn;
 };
 
 #endif // EXPORTDLG_HPP

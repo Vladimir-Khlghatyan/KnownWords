@@ -22,7 +22,7 @@ SourceDlg::SourceDlg(QWidget* parent)
 
     m_textEdit = new PlainTextEdit();
     m_textEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_textEdit->setPlaceholderText("Add text here...");
+    m_textEdit->setPlaceholderText("Enter text...");
 
     m_caseBtn = new QPushButton();
     m_caseBtn->setIcon(QIcon(":/icons/toggle_off.png"));
@@ -32,7 +32,7 @@ SourceDlg::SourceDlg(QWidget* parent)
     connect(m_caseBtn, &QPushButton::clicked, this, &SourceDlg::onCase);
 
     m_caseText = new QLabel("case insensitive");
-    m_caseText->setProperty("infoKey", true);
+    m_caseText->setProperty("infoKeyLabel", true);
 
     m_laterBtn = new QPushButton();
     m_laterBtn->setIcon(QIcon(":/icons/toggle_off.png"));
@@ -42,7 +42,7 @@ SourceDlg::SourceDlg(QWidget* parent)
     connect(m_laterBtn, &QPushButton::clicked, this, &SourceDlg::onLater);
 
     m_laterText = new QLabel("take words from Later set");
-    m_laterText->setProperty("infoKey", true);
+    m_laterText->setProperty("infoKeyLabel", true);
 
     QGridLayout* gLayout = new QGridLayout();
     gLayout->addWidget(m_caseBtn,   0, 0, 1, 1);

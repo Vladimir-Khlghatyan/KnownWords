@@ -13,5 +13,6 @@
         <file>icons/toggle_off.png</file>
         <file>icons/toggle_on.png</file>
         <file>icons/translate.png</file>
+        <file>icons/export.png</file>
     </qresource>
 </RCC>

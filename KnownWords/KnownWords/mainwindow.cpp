@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 
 #include "sourcedlg.hpp"
+#include "exportdlg.hpp"
 #include "lineeditreadonly.hpp"
 #include "texttospeech.hpp"
 #include "armeniantranslator.hpp"
@@ -46,11 +47,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_percentMsg = addMessage("Known Percentage:").first;
     m_forLaterBtn = addMessage("For Later:", true).second;
 
-    m_sourceMsgBtn->setToolTip("Known / Total");
+    m_sourceMsgBtn->setToolTip("Known / Total\n - Click to export current source.");
     m_percentMsg->setToolTip("Current known / Total known * 100%");
     m_forLaterBtn->setToolTip(QString("Words to learn later.%1%2")
                                 .arg("\n - Click to sync with knows words.",
                                      "\n - Double click to sync and load words to learn."));
+    connect(m_sourceMsgBtn, &MyButton::singleClicked, this, &MainWindow::onSourceMsgBtnSingleClick);
     connect(m_forLaterBtn, &MyButton::singleClicked, this, &MainWindow::onLaterBtnSingleClick);
     connect(m_forLaterBtn, &MyButton::doubleClicked, this, &MainWindow::onLaterBtnDoubleClick);
 
@@ -327,6 +329,15 @@ void MainWindow::onKnownBtn()
         m_currWordVec.pop_back();
         updateMessage(++m_currKnownCnt, m_currWordCnt);
         showRandomWord();
+    }
+}
+
+void MainWindow::onSourceMsgBtnSingleClick()
+{
+    ExportDlg dlg(this);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+
     }
 }
 

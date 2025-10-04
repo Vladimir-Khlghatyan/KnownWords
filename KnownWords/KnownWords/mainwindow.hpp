@@ -55,6 +55,7 @@ private slots:
     void onLaterBtn();
     void onDeleteBtn();
     void onKnownBtn();
+    void onSourceMsgBtnSingleClick();
     void onLaterBtnSingleClick();
     void onLaterBtnDoubleClick();
     void onErrorMsg(const QString& msg);

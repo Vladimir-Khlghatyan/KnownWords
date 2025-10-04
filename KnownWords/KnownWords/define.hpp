@@ -106,6 +106,15 @@ QLineEdit
     color:      white;
     font-size:  32px;
 }
+QLineEdit[isFileName="true"]
+{
+    border:        1px solid #9B9C9C;
+    border-radius: 5px;
+    background:    #2e2f30;
+    color:         white;
+    font-size:     16px;
+    min-height:    30px;
+}
 )");
 
 // https://fonts.google.com/icons
