@@ -352,12 +352,20 @@ void MainWindow::onSourceMsgBtnSingleClick()
             return;
         }
 
-        for (const auto& word : m_currWordVec) {
-            exportFile << word << '\n';
+        int count{-1};
+
+        for (const auto& word : m_currWordVec)
+        {
+            count = (count + 1 ) % 10;
+            const char c = (count == 9) ? '\n' : ' ';
+            exportFile << word << c;
         }
 
-        for (const auto& word : m_newLaterWordVec) {
-            exportFile << word << '\n';
+        for (const auto& word : m_newLaterWordVec)
+        {
+            count = (count + 1 ) % 10;
+            const char c = (count == 9) ? '\n' : ' ';
+            exportFile << word << c;
         }
     }
 }
