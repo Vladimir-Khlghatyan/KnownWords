@@ -26,7 +26,7 @@ public:
 private slots:
     void onCase();
     void onLater();
-    void onCencel();
+    void onCancel();
     void onOk();
 
 private:

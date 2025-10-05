@@ -52,7 +52,7 @@ SourceDlg::SourceDlg(QWidget* parent)
 
     m_cancelBtn = new QPushButton("Cancel");
     m_cancelBtn->setCursor(Qt::PointingHandCursor);
-    connect(m_cancelBtn, &QPushButton::clicked, this, &SourceDlg::onCencel);
+    connect(m_cancelBtn, &QPushButton::clicked, this, &SourceDlg::onCancel);
 
     m_okBtn = new QPushButton("Ok");
     m_okBtn->setCursor(Qt::PointingHandCursor);
@@ -104,7 +104,7 @@ void SourceDlg::onLater()
 }
 
 
-void SourceDlg::onCencel()
+void SourceDlg::onCancel()
 {
     reject();
 }

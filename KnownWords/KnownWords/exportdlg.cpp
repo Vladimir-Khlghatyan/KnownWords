@@ -17,14 +17,20 @@ ExportDlg::ExportDlg(QWidget* parent)
     setMinimumWidth(450);
     setFixedHeight(120);
 
-    const QString desktop = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    m_dirPath = new QLabel(desktop);
-    m_dirPath->setProperty("infoKeyLabel", true);
+    m_dirPath = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    m_fileName = "words.txt";
+
+    m_pathLabel = new QLabel(m_dirPath);
+    m_pathLabel->setProperty("infoKeyLabel", true);
 
     m_lineEdit = new QLineEdit();
     m_lineEdit->setProperty("isFileName", true);
     m_lineEdit->setTextMargins(8, 0, 8, 0);
     m_lineEdit->setPlaceholderText("Enter file name...");
+    m_lineEdit->setText(m_fileName);
+    m_lineEdit->setFocus();
+    m_lineEdit->setSelection(0, m_fileName.size() - 4);
+    connect(m_lineEdit, &QLineEdit::textChanged, this, &ExportDlg::onTextChanged);
 
     m_browseBtn = new QPushButton();
     m_browseBtn->setProperty("iconButton", true);
@@ -37,7 +43,7 @@ ExportDlg::ExportDlg(QWidget* parent)
 
     m_cancelBtn = new QPushButton("Cancel");
     m_cancelBtn->setCursor(Qt::PointingHandCursor);
-    connect(m_cancelBtn, &QPushButton::clicked, this, &ExportDlg::onCencel);
+    connect(m_cancelBtn, &QPushButton::clicked, this, &ExportDlg::onCancel);
 
     m_exportBtn = new QPushButton("Export");
     m_exportBtn->setCursor(Qt::PointingHandCursor);
@@ -53,7 +59,7 @@ ExportDlg::ExportDlg(QWidget* parent)
     hLayout1->addWidget(m_exportBtn);
 
     QVBoxLayout* vLayout = new QVBoxLayout();
-    vLayout->addWidget(m_dirPath);
+    vLayout->addWidget(m_pathLabel);
     vLayout->addLayout(hLayout0);
     vLayout->addLayout(hLayout1);
 
@@ -63,35 +69,50 @@ ExportDlg::ExportDlg(QWidget* parent)
 void ExportDlg::onBrowse()
 {
     const QString path = getTxtFileOrDirectory(); // update this line
+    if (!path.isEmpty())
+    {
+        m_dirPath = std::move(path);
+        m_pathLabel->setText(m_dirPath);
+    }
 }
 
-void ExportDlg::onCencel()
+void ExportDlg::onCancel()
 {
     reject();
 }
 
 void ExportDlg::onExport()
 {
-    // add code here
+    accept();
+}
+
+void ExportDlg::onTextChanged(const QString& text)
+{
+    m_fileName = text;
 }
 
 QString ExportDlg::getTxtFileOrDirectory()
 {
-    QFileDialog dialog(this, QObject::tr("Select .txt File or Directory"));
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setNameFilter(QObject::tr("Text Files (*.txt)"));
+    QFileDialog dialog(this, tr("Select Directory"));
+    dialog.setFileMode(QFileDialog::Directory);
+    dialog.setOption(QFileDialog::ShowDirsOnly, true);
     dialog.setDirectory(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    dialog.setOption(QFileDialog::ShowDirsOnly, false);
 
     if (dialog.exec() == QDialog::Accepted)
     {
-        const QStringList files = dialog.selectedFiles();
-        QString path = files.isEmpty() ? QString() : files.at(0);
-        QFileInfo info(path);
-
-        return (info.isFile() && info.suffix().toLower() == "txt") ?
-                      info.absoluteFilePath() : info.absolutePath();
+        const QStringList selected = dialog.selectedFiles();
+        if (!selected.isEmpty()) {
+            return selected.first();
+        }
     }
 
     return QString();
+}
+
+QString ExportDlg::getFilePath()
+{
+    if (!m_fileName.endsWith(".txt")) {
+        m_fileName += ".txt";
+    }
+    return m_dirPath + "/" + m_fileName;
 }
