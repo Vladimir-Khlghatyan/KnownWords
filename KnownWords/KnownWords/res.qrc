@@ -14,5 +14,6 @@
         <file>icons/toggle_on.png</file>
         <file>icons/translate.png</file>
         <file>icons/export.png</file>
+        <file>icons/checked.png</file>
     </qresource>
 </RCC>

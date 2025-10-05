@@ -115,6 +115,22 @@ QLineEdit[isFileName="true"]
     font-size:     16px;
     min-height:    30px;
 }
+QCheckBox::indicator
+{
+    border: 1px solid #5E5E5E;
+    border-radius:    3px;
+    background-color: #2e2f30;
+    width:            14px;
+    height:           14px;
+}
+QCheckBox::indicator:hover
+{
+    border: 1px solid #9B9C9C;
+}
+QCheckBox::indicator:checked
+{
+    image: url(:/icons/checked.png);
+}
 )");
 
 // https://fonts.google.com/icons

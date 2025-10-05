@@ -12,6 +12,7 @@ class QGridLayout;
 class QVBoxLayout;
 class QLabel;
 class QLineEdit;
+class QCheckBox;
 class LineEditReadOnly;
 class TextToSpeech;
 class ArmenianTranslator;
@@ -80,6 +81,7 @@ private:
     QLabel*      m_percentMsg;
     QLabel*      m_translatedText;
     QLabel*      m_errorMsg;
+    QCheckBox*   m_autoTranslate;
 
     LineEditReadOnly* m_lineEdit;
 

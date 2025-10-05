@@ -15,6 +15,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QLineEdit>
+#include <QCheckBox>
 #include <QTimer>
 
 #include <fstream>
@@ -64,8 +65,12 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_translatedText = new QLabel();
     m_translatedText->setProperty("translate", true);
-    m_translatedText->setFixedSize(4 * 80 + 3 * 4, 36);
+    m_translatedText->setFixedSize(4 * 80 + 3 * 4 - 17, 36);
     m_translatedText->setAlignment(Qt::AlignHCenter);
+
+    m_autoTranslate = new QCheckBox();
+    m_autoTranslate->setToolTip("Auto translation from Eng to Arm.");
+    m_autoTranslate->setCursor(Qt::PointingHandCursor);
 
     showRandomWord();
 
@@ -136,7 +141,8 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(m_translateBtn,   2, 1, 1, 1, Qt::AlignRight);
     layout->addLayout(btnLayout,        4, 0, 1, 2);
     layout->addWidget(spacing,          5, 0, 1, 2);
-    layout->addWidget(m_translatedText, 6, 0, 1, 2, Qt::AlignHCenter);
+    layout->addWidget(m_translatedText, 6, 0, 1, 1, Qt::AlignRight);
+    layout->addWidget(m_autoTranslate,  6, 1, 1, 1, Qt::AlignHCenter);
     layout->addWidget(m_errorMsg,       7, 0, 1, 1, Qt::AlignLeft);
 }
 
@@ -391,7 +397,11 @@ void MainWindow::onEditingFinished()
     }
 
     m_currWordVec[m_currIndex] = m_lineEdit->text().toStdString();
-    m_translatedText->setText("");
+    if (m_autoTranslate->isChecked()) {
+        m_translateBtn->click();
+    } else {
+        m_translatedText->setText("");
+    }
 }
 
 void MainWindow::updateMessage(int known, int total)
@@ -439,13 +449,23 @@ void MainWindow::showRandomWord()
         m_currIndex = getRandomNumber(0, m_currWordVec.size() - 1);
         m_lineEdit->setText(m_currWordVec[m_currIndex].c_str());
     }
-    m_translatedText->setText("");
+
+    if (m_autoTranslate->isChecked()) {
+        m_translateBtn->click();
+    } else {
+        m_translatedText->setText("");
+    }
 }
 
 void MainWindow::showRandomWord(int index)
 {
     m_lineEdit->setText(m_currWordVec[index].c_str());
-    m_translatedText->setText("");
+
+    if (m_autoTranslate->isChecked()) {
+        m_translateBtn->click();
+    } else {
+        m_translatedText->setText("");
+    }
 }
 
 void MainWindow::save(WordVec& src, const std::string& outFile)
