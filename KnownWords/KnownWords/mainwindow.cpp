@@ -343,6 +343,10 @@ void MainWindow::onSourceMsgBtnSingleClick()
     ExportDlg dlg(this);
     if (dlg.exec() == QDialog::Accepted)
     {
+        if (m_currWordVec.empty() && m_newLaterWordVec.empty()) {
+            return;
+        }
+
         const std::string exportFilePath = dlg.getFilePath().toStdString();
         std::fstream exportFile(exportFilePath, std::ios::out | std::ios::binary | std::ios::trunc);
 
