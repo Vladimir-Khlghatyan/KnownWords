@@ -386,3 +386,6 @@ predecessor
 rider
 flee
 emphasize
+elder
+distort
+proper
