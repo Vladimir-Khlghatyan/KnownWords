@@ -7,6 +7,7 @@
 #include <QString>
 
 #include <unordered_set>
+#include <unordered_map>
 #include <string>
 
 class QPushButton;
@@ -22,6 +23,11 @@ public:
 
     const std::unordered_set<std::string>& getWords() const { return m_wordSet; }
     bool isLaterSkipMode() const;
+
+private:
+    std::string getExecutableGrandparentDirPath();
+    void setupLemmas();
+    void checkLemmas();
 
 private slots:
     void onCase();
@@ -40,6 +46,7 @@ private:
     bool           m_isCaseInsensitive;
     bool           m_laterSkipMode;
     std::unordered_set<std::string> m_wordSet;
+    std::unordered_map<std::string, std::string> m_lemmaMap;
 };
 
 #endif // SOURCEDLG_HPP

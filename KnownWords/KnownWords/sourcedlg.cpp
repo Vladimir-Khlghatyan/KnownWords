@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <vector>
+#include <QCoreApplication>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -19,6 +20,8 @@ SourceDlg::SourceDlg(QWidget* parent)
     setWindowIcon(QIcon(":/icons/source.png"));
     setWindowTitle("Add source");
     setMinimumSize(450,100);
+
+    setupLemmas();
 
     m_textEdit = new PlainTextEdit();
     m_textEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -135,6 +138,7 @@ void SourceDlg::onOk()
         }
     }
 
+    checkLemmas();
     accept();
 }
 
@@ -142,4 +146,54 @@ bool SourceDlg::isLaterSkipMode() const
 {
     const QString text = m_laterText->text();
     return text[0] == QChar('s');
+}
+
+void SourceDlg::setupLemmas()
+{
+    const std::string path = getExecutableGrandparentDirPath() + "/Settings/lemma_base.txt";
+    std::fstream file(path, std::ios::in | std::ios::binary);
+
+    if (!file)
+    {
+        // "Failed to open the file."
+        return;
+    }
+
+    std::string lineStr;
+    while (std::getline(file, lineStr))
+    {
+        if (!lineStr.empty())
+        {
+            int i = lineStr.find_first_of(' ');
+            const std::string key = lineStr.substr(0,i);
+            const std::string value = lineStr.substr(i+1);
+            m_lemmaMap[key] = value;
+        }
+    }
+}
+
+void SourceDlg::checkLemmas()
+{
+    std::unordered_set<std::string> uniqueLemmaWordSet;
+
+    for (const std::string& word : m_wordSet)
+    {
+        auto it = m_lemmaMap.find(word);
+        if (it == m_lemmaMap.end()) {
+            uniqueLemmaWordSet.insert(word);
+        } else {
+            uniqueLemmaWordSet.insert(it->second);
+        }
+    }
+
+    m_wordSet = std::move(uniqueLemmaWordSet);
+}
+
+std::string SourceDlg::getExecutableGrandparentDirPath()
+{
+    const QString executableDirPath = QCoreApplication::applicationDirPath();
+    QDir parentDir(executableDirPath);
+    parentDir.cdUp();
+    const QString grandparentDirPath = parentDir.absolutePath();
+    return grandparentDirPath.toStdString();
 }
