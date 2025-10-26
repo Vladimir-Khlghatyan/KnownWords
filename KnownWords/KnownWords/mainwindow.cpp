@@ -263,6 +263,8 @@ void MainWindow::onSourceBtn()
 
         updateMessage(m_currKnownCnt, m_currWordCnt);
         showRandomWord();
+
+        onErrorMsg(dlg.getLemmaMsg());
     }
 }
 

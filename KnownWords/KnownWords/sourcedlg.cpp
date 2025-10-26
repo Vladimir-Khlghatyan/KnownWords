@@ -174,8 +174,13 @@ void SourceDlg::setupLemmas()
 
 void SourceDlg::checkLemmas()
 {
+    if (m_wordSet.empty()) {
+        return;
+    }
+
     std::unordered_set<std::string> uniqueLemmaWordSet;
 
+    int found{}, total = m_wordSet.size();
     for (const std::string& word : m_wordSet)
     {
         auto it = m_lemmaMap.find(word);
@@ -183,10 +188,13 @@ void SourceDlg::checkLemmas()
             uniqueLemmaWordSet.insert(word);
         } else {
             uniqueLemmaWordSet.insert(it->second);
+            ++found;
         }
     }
 
+    m_lemmaMsg = "Lemmatizer success ratio: " + QString::number(static_cast<double>(found) / total * 100, 'f', 1) + "%";
     m_wordSet = std::move(uniqueLemmaWordSet);
+
 }
 
 std::string SourceDlg::getExecutableGrandparentDirPath()
