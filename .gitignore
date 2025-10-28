@@ -5,3 +5,4 @@
 a.out
 .vscode/
 build*
+KnownWords/Settings/lemma_missing.txt

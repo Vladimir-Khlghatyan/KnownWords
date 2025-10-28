@@ -178,6 +178,9 @@ void SourceDlg::checkLemmas()
         return;
     }
 
+    const std::string path = getExecutableGrandparentDirPath() + "/Settings/lemma_missing.txt";
+    std::fstream missingLemmaFile(path, std::ios::out | std::ios::binary | std::ios::trunc);
+
     std::unordered_set<std::string> uniqueLemmaWordSet;
 
     int found{}, total = m_wordSet.size();
@@ -186,6 +189,7 @@ void SourceDlg::checkLemmas()
         auto it = m_lemmaMap.find(word);
         if (it == m_lemmaMap.end()) {
             uniqueLemmaWordSet.insert(word);
+            missingLemmaFile << word << "\n";
         } else {
             uniqueLemmaWordSet.insert(it->second);
             ++found;
