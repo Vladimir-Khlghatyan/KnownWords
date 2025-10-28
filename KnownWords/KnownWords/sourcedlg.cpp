@@ -181,6 +181,16 @@ void SourceDlg::checkLemmas()
     const std::string path = getExecutableGrandparentDirPath() + "/Settings/lemma_missing.txt";
     std::fstream missingLemmaFile(path, std::ios::out | std::ios::binary | std::ios::trunc);
 
+    std::string promtText = "I have a list of English words. "
+    "I want you to lemmatize them — each word should be reduced to its base dictionary form "
+    "(e.g., went → go, children’s → child, wasn’t → be not).\n"
+    "Handle contractions and possessives as follows:\n"
+    "* can’t → cannot\n"
+    "* woman’s → woman\n"
+    "* Everything should be lowercase.\n"
+    "Then generate a .txt file containing all word<space>lemma pairs, one per line.\n\n";
+    missingLemmaFile << promtText;
+
     std::unordered_set<std::string> uniqueLemmaWordSet;
 
     int found{}, total = m_wordSet.size();
