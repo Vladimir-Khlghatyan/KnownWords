@@ -189,7 +189,7 @@ void SourceDlg::checkLemmas()
     "* woman’s → woman\n"
     "* Everything should be lowercase.\n"
     "Then generate a .txt file containing all word<space>lemma pairs, one per line.\n"
-    "The separator must be a single space character.\n\n";
+    "The separator must be a single space character. Skip non-English words.\n\n";
     missingLemmaFile << promtText;
 
     std::unordered_set<std::string> uniqueLemmaWordSet;
