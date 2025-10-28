@@ -188,7 +188,8 @@ void SourceDlg::checkLemmas()
     "* can’t → cannot\n"
     "* woman’s → woman\n"
     "* Everything should be lowercase.\n"
-    "Then generate a .txt file containing all word<space>lemma pairs, one per line.\n\n";
+    "Then generate a .txt file containing all word<space>lemma pairs, one per line.\n"
+    "The separator must be a single space character.\n\n";
     missingLemmaFile << promtText;
 
     std::unordered_set<std::string> uniqueLemmaWordSet;
@@ -199,7 +200,7 @@ void SourceDlg::checkLemmas()
         auto it = m_lemmaMap.find(word);
         if (it == m_lemmaMap.end()) {
             uniqueLemmaWordSet.insert(word);
-            missingLemmaFile << word << "\n";
+            missingLemmaFile << word << '\n';
         } else {
             uniqueLemmaWordSet.insert(it->second);
             ++found;
