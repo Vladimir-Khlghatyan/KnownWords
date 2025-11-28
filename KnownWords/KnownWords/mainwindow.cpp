@@ -72,6 +72,12 @@ MainWindow::MainWindow(QWidget *parent)
     m_autoTranslate->setToolTip("Auto translation from Eng to Arm.");
     m_autoTranslate->setCursor(Qt::PointingHandCursor);
 
+    connect(m_autoTranslate, &QCheckBox::toggled, this, [this] (bool checked) {
+        if (checked) {
+            m_translateBtn->click();
+        }
+    });
+
     showRandomWord();
 
     m_sourceBtn = getButtonWithIcon("source", "Add new source");
