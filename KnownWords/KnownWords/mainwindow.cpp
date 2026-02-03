@@ -1,6 +1,7 @@
 #include "mainwindow.hpp"
 
 #include "sourcedlg.hpp"
+#include "missingdlg.hpp"
 #include "exportdlg.hpp"
 #include "lineeditreadonly.hpp"
 #include "texttospeech.hpp"
@@ -35,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Known Words");
     setWindowIcon(QIcon(":/icons/logo.png"));
     setStyleSheet(MAIN_WINDOW_STYLE);
-    setFixedSize(QSize(400, 300));
+    setFixedSize(QSize(400, 330));
 
     m_knownFilePath = getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt";
     m_laterFilePath = getExecutableGrandparentDirPath() + "/WordSource/ForLater.txt";
@@ -82,6 +83,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_sourceBtn = getButtonWithIcon("source", "Add new source");
     connect(m_sourceBtn, &QPushButton::clicked, this, &MainWindow::onSourceBtn);
+
+    m_missingBtn = getButtonWithIcon("missing", "Get missing lemmas with AI promt");
+    connect(m_missingBtn, &QPushButton::clicked, this, &MainWindow::onMissingBtn);
 
     m_soundBtn = getButtonWithIcon("soundPlay", "Listen");
 //    QSizePolicy sp = m_soundBtn->sizePolicy();
@@ -140,16 +144,17 @@ MainWindow::MainWindow(QWidget *parent)
     QWidget* spacing = new QWidget();
     spacing->setFixedHeight(8);
 
-    layout->addLayout(m_infoLayout,     0, 0, 3, 1, Qt::AlignLeft | Qt::AlignTop);
-    layout->addWidget(m_lineEdit,       3, 0, 1, 2, Qt::AlignVCenter);
+    layout->addLayout(m_infoLayout,     0, 0, 4, 1, Qt::AlignLeft | Qt::AlignTop);
+    layout->addWidget(m_lineEdit,       4, 0, 1, 2, Qt::AlignVCenter);
     layout->addWidget(m_sourceBtn,      0, 1, 1, 1, Qt::AlignRight);
-    layout->addWidget(m_soundBtn,       1, 1, 1, 1, Qt::AlignRight);
-    layout->addWidget(m_translateBtn,   2, 1, 1, 1, Qt::AlignRight);
-    layout->addLayout(btnLayout,        4, 0, 1, 2);
-    layout->addWidget(spacing,          5, 0, 1, 2);
-    layout->addWidget(m_translatedText, 6, 0, 1, 1, Qt::AlignRight);
-    layout->addWidget(m_autoTranslate,  6, 1, 1, 1, Qt::AlignHCenter);
-    layout->addWidget(m_errorMsg,       7, 0, 1, 1, Qt::AlignLeft);
+    layout->addWidget(m_missingBtn,     1, 1, 1, 1, Qt::AlignRight);
+    layout->addWidget(m_soundBtn,       2, 1, 1, 1, Qt::AlignRight);
+    layout->addWidget(m_translateBtn,   3, 1, 1, 1, Qt::AlignRight);
+    layout->addLayout(btnLayout,        5, 0, 1, 2);
+    layout->addWidget(spacing,          6, 0, 1, 2);
+    layout->addWidget(m_translatedText, 7, 0, 1, 1, Qt::AlignRight);
+    layout->addWidget(m_autoTranslate,  7, 1, 1, 1, Qt::AlignHCenter);
+    layout->addWidget(m_errorMsg,       8, 0, 1, 1, Qt::AlignLeft);
 }
 
 MainWindow::~MainWindow()
@@ -271,6 +276,16 @@ void MainWindow::onSourceBtn()
         showRandomWord();
 
         onErrorMsg(dlg.getLemmaMsg());
+        m_missingLemmas = dlg.getMissingLemmas();
+    }
+}
+
+void MainWindow::onMissingBtn()
+{
+    MissingDlg dlg(this, m_missingLemmas);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        m_missingLemmas.clear();
     }
 }
 

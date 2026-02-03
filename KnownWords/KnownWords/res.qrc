@@ -15,5 +15,6 @@
         <file>icons/translate.png</file>
         <file>icons/export.png</file>
         <file>icons/checked.png</file>
+        <file>icons/missing.png</file>
     </qresource>
 </RCC>

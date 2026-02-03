@@ -178,11 +178,8 @@ void SourceDlg::checkLemmas()
         return;
     }
 
-    const std::string path = getExecutableGrandparentDirPath() + "/Settings/lemma_missing.txt";
-    std::fstream missingLemmaFile(path, std::ios::out | std::ios::binary | std::ios::trunc);
-
-    std::string promtText = "I have a list of English words. "
-    "I want you to lemmatize them — each word should be reduced to its base dictionary form "
+    m_missingLemmas = "I have a list of English words and "
+    "I want you to lemmatize them - each word should be reduced to its base dictionary form "
     "(e.g., went → go, children’s → child, wasn’t → be not).\n"
     "Handle contractions and possessives as follows:\n"
     "* can’t → cannot\n"
@@ -190,7 +187,6 @@ void SourceDlg::checkLemmas()
     "* Everything should be lowercase.\n"
     "Then generate a .txt file containing all word<space>lemma pairs, one per line.\n"
     "The separator must be a single space character. Skip non-English words.\n\n";
-    missingLemmaFile << promtText;
 
     std::unordered_set<std::string> uniqueLemmaWordSet;
 
@@ -200,7 +196,8 @@ void SourceDlg::checkLemmas()
         auto it = m_lemmaMap.find(word);
         if (it == m_lemmaMap.end()) {
             uniqueLemmaWordSet.insert(word);
-            missingLemmaFile << word << '\n';
+            m_missingLemmas += word.c_str();
+            m_missingLemmas += '\n';
         } else {
             uniqueLemmaWordSet.insert(it->second);
             ++found;

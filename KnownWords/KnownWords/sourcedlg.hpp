@@ -24,6 +24,7 @@ public:
     const std::unordered_set<std::string>& getWords() const { return m_wordSet; }
     bool isLaterSkipMode() const;
     const QString& getLemmaMsg() const { return m_lemmaMsg; }
+    const QString& getMissingLemmas() const { return m_missingLemmas; }
 
 private:
     std::string getExecutableGrandparentDirPath();
@@ -45,6 +46,7 @@ private:
     QPushButton*   m_cancelBtn;
     QPushButton*   m_okBtn;
     QString        m_lemmaMsg;
+    QString        m_missingLemmas;
     bool           m_isCaseInsensitive;
     bool           m_laterSkipMode;
     std::unordered_set<std::string> m_wordSet;

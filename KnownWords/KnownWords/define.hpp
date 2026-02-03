@@ -134,5 +134,6 @@ QCheckBox::indicator:checked
 )");
 
 // https://fonts.google.com/icons
+// icon size: 96X96
 
 #endif // DEFINE_HPP

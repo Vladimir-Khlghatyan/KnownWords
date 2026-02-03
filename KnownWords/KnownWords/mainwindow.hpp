@@ -50,6 +50,7 @@ private:
 
 private slots:
     void onSourceBtn();
+    void onMissingBtn();
     void onSoundBtn();
     void onTranslateBtn();
     void onSkipBtn();
@@ -68,6 +69,7 @@ private:
     std::string m_laterFilePath;
 
     QPushButton* m_sourceBtn;
+    QPushButton* m_missingBtn;
     QPushButton* m_soundBtn;
     QPushButton* m_translateBtn;
     QPushButton* m_skipBtn;
@@ -82,6 +84,7 @@ private:
     QLabel*      m_translatedText;
     QLabel*      m_errorMsg;
     QCheckBox*   m_autoTranslate;
+    QString      m_missingLemmas;
 
     LineEditReadOnly* m_lineEdit;
 

@@ -18,6 +18,7 @@ set(PROJECT_SOURCES
 		mainwindow.hpp
 		texttospeech.hpp texttospeech.cpp
 		sourcedlg.hpp sourcedlg.cpp
+		missingdlg.hpp missingdlg.cpp
 		lineeditreadonly.hpp lineeditreadonly.cpp
 		armeniantranslator.hpp armeniantranslator.cpp
 		exportdlg.hpp exportdlg.cpp
