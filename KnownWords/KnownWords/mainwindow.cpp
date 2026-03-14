@@ -505,6 +505,10 @@ void MainWindow::showRandomWord(int index)
 
 void MainWindow::save(WordVec& src, const std::string& outFile)
 {
+    if (src.empty()) {
+        return;
+    }
+
     std::fstream file(outFile, std::ios::in | std::ios::out | std::ios::app | std::ios::binary);
 
     if (!file.is_open())
