@@ -518,7 +518,7 @@ void MainWindow::save(WordVec& src, const std::string& outFile)
     }
 
     file.seekg(-1, std::ios::end);
-    char lastChar;
+    char lastChar{};
     file.get(lastChar);
 
     if (lastChar != '\n')
