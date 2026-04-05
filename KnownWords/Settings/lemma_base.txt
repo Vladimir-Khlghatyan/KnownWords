@@ -191093,4 +191093,9 @@ ought ought
 indistinguishable indistinguishable
 pre-commitment pre-commitment
 one-boxers one-boxer
+interdependent interdependent
+deferential deferential
+flexible flexible
+forthright forthright
+indirectly indirectly
 
