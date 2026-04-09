@@ -4266,3 +4266,12 @@ costly
 interpreting
 telephone
 participate
+hall
+thesis
+tutorial
+dissertation
+postgraduate
+tutor
+doctoral
+residence
+undergraduate
