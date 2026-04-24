@@ -179,15 +179,21 @@ void SourceDlg::checkLemmas()
         return;
     }
 
-    m_missingLemmas = "I have a list of English words and "
-    "I want you to lemmatize them - each word should be reduced to its base dictionary form "
-    "(e.g., went → go, children’s → child, wasn’t → be not).\n"
-    "Handle contractions and possessives as follows:\n"
-    "* can’t → cannot\n"
-    "* woman’s → woman\n"
-    "* Everything should be lowercase.\n"
-    "Then generate a .txt file containing all word<space>lemma pairs, one per line.\n"
-    "The separator must be a single space character. Skip non-English words.\n\n";
+    m_missingLemmas = "I have a list of English words, and "
+    "I want you to lemmatize each one by converting it to its base dictionary form "
+    "(e.g., went → go, children’s → child, wasn’t → be not).\n\n"
+    "Rules:\n"
+    "* Handle contractions by expanding them into their full base forms "
+    "(e.g., can’t → cannot, wasn’t → be not).\n"
+    "* Handle possessives by removing the possessive ending and "
+    "returning the base noun (e.g., woman’s → woman, children’s → child).\n"
+    "* Convert all output to lowercase.\n"
+    "* Skip any non-English words.\n"
+    "* Preserve duplicates if the same word appears multiple times.\n\n"
+    "Output format:\n"
+    "* Return one result per line as: word<lemma>\n"
+    "* Use exactly one space character between the original word and its lemma.\n"
+    "* Do not include numbering, explanations, or extra text.\n\n";
 
     std::unordered_set<std::string> uniqueLemmaWordSet;
 
