@@ -92,9 +92,16 @@ QToolTip
     color:      #9B9C9C;
     font-size:  14px;
 }
-QTextEdit
+QTextEdit[isValidText="true"]
 {
     border:         1px solid #9B9C9C;
+    border-radius:  5px;
+    background:     #2e2f30;
+    color:          white;
+}
+QTextEdit[isValidText="false"]
+{
+    border:         1px solid red;
     border-radius:  5px;
     background:     #2e2f30;
     color:          white;
@@ -114,6 +121,18 @@ QLineEdit[isFileName="true"]
     color:         white;
     font-size:     16px;
     min-height:    30px;
+}
+QCheckBox[isActiveText="true"]
+{
+    font-style: italic;
+    font-size:  16px;
+    color:      #BFBFBF;
+}
+QCheckBox[isActiveText="false"]
+{
+    font-style: italic;
+    font-size:  16px;
+    color:      #5E5E5E;
 }
 QCheckBox::indicator
 {

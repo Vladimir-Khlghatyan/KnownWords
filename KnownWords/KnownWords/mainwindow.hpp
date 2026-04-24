@@ -67,6 +67,7 @@ private slots:
 private:
     std::string m_knownFilePath;
     std::string m_laterFilePath;
+    std::string m_lemmaBasePath;
 
     QPushButton* m_sourceBtn;
     QPushButton* m_missingBtn;

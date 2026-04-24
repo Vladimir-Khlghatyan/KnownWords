@@ -44,7 +44,7 @@ SourceDlg::SourceDlg(QWidget* parent)
     m_laterBtn->setCursor(Qt::PointingHandCursor);
     connect(m_laterBtn, &QPushButton::clicked, this, &SourceDlg::onLater);
 
-    m_laterText = new QLabel("take words from Later set");
+    m_laterText = new QLabel("take words from the Later set");
     m_laterText->setProperty("infoKeyLabel", true);
 
     QGridLayout* gLayout = new QGridLayout();
@@ -97,12 +97,12 @@ void SourceDlg::onLater()
     if (m_laterSkipMode)
     {
         m_laterBtn->setIcon(QIcon(":/icons/toggle_on.png"));
-        m_laterText->setText("skip words from Later set");
+        m_laterText->setText("skip words from the Later set");
     }
     else
     {
         m_laterBtn->setIcon(QIcon(":/icons/toggle_off.png"));
-        m_laterText->setText("take words from Later set");
+        m_laterText->setText("take words from the Later set");
     }
 }
 

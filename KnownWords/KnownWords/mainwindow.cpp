@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_knownFilePath = getExecutableGrandparentDirPath() + "/WordSource/KnownWords.txt";
     m_laterFilePath = getExecutableGrandparentDirPath() + "/WordSource/ForLater.txt";
+    m_lemmaBasePath = getExecutableGrandparentDirPath() + "/Settings/lemma_base.txt";
 
     m_knownWordSet = parseWordSource(m_knownFilePath);
     m_laterWordSet = parseWordSource(m_laterFilePath);
@@ -282,7 +283,7 @@ void MainWindow::onSourceBtn()
 
 void MainWindow::onMissingBtn()
 {
-    MissingDlg dlg(this, m_missingLemmas);
+    MissingDlg dlg(this, m_missingLemmas, m_lemmaBasePath);
     if (dlg.exec() == QDialog::Accepted)
     {
         m_missingLemmas.clear();
