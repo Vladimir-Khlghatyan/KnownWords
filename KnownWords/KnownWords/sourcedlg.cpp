@@ -24,6 +24,7 @@ SourceDlg::SourceDlg(QWidget* parent)
     setupLemmas();
 
     m_textEdit = new PlainTextEdit();
+    m_textEdit->setProperty("isValidText", true);
     m_textEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_textEdit->setPlaceholderText("Enter text...");
 
