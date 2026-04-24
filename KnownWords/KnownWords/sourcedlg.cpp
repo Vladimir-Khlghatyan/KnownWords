@@ -208,6 +208,9 @@ void SourceDlg::checkLemmas()
     m_lemmaMsg = "Lemmatizer success ratio: " + QString::number(static_cast<double>(found) / total * 100, 'f', 1) + "%";
     m_wordSet = std::move(uniqueLemmaWordSet);
 
+    if (found == total) {
+        m_missingLemmas.clear();
+    }
 }
 
 std::string SourceDlg::getExecutableGrandparentDirPath()
