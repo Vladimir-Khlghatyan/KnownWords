@@ -4614,3 +4614,15 @@ aware
 zebra
 bread
 geography
+waitress
+waiter
+booking
+halfway
+dish
+spaghetti
+sauce
+overwork
+re-cook
+rude
+portion
+clearing
