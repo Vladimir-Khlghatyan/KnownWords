@@ -4626,6 +4626,10 @@ re-cook
 rude
 portion
 clearing
+steak
+overcook
+undercook
+understaff
 header
 pricing
 workflow
