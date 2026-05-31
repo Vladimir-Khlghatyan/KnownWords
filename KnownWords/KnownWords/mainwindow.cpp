@@ -108,9 +108,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_translator, &ArmenianTranslator::errorOccurred, this, &MainWindow::onErrorMsg);
     connect(m_translator, &ArmenianTranslator::translationReady, this, &MainWindow::onTranslationReady);
 
-    m_skipBtn = new QPushButton("Skip");
+    m_skipBtn = new MyButton("Skip");
     m_skipBtn->setCursor(Qt::PointingHandCursor);
-    connect(m_skipBtn, &QPushButton::clicked, this, &MainWindow::onSkipBtn);
+    connect(m_skipBtn, &MyButton::singleClicked, this, &MainWindow::onSkipBtn1);
+    connect(m_skipBtn, &MyButton::doubleClicked, this, &MainWindow::onSkipBtn2);
 
     m_laterBtn = new QPushButton("Later");
     m_laterBtn->setCursor(Qt::PointingHandCursor);
@@ -302,11 +303,11 @@ void MainWindow::onTranslateBtn()
     m_translator->translateToArmenian(m_lineEdit->text());
 }
 
-void MainWindow::onSkipBtn()
+bool MainWindow::onSkipBtn1()
 {
     if (m_currIndex ==-1 || m_currWordVec.size() < 2) {
         onErrorMsg("No word to skip.");
-        return;
+        return false;
     }
 
     const int prevIndex = m_currIndex;
@@ -316,7 +317,18 @@ void MainWindow::onSkipBtn()
     }
 
     showRandomWord(m_currIndex);
+    return true;
 }
+
+void MainWindow::onSkipBtn2()
+{
+    if (onSkipBtn1()) {
+        m_soundBtn->click();
+    } else {
+        onErrorMsg("No word to skip.");
+    }
+}
+
 void MainWindow::onLaterBtn()
 {
     if (m_currIndex == -1) {

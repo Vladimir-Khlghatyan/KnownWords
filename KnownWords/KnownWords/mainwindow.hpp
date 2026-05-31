@@ -53,7 +53,8 @@ private slots:
     void onMissingBtn();
     void onSoundBtn();
     void onTranslateBtn();
-    void onSkipBtn();
+    bool onSkipBtn1();
+    void onSkipBtn2();
     void onLaterBtn();
     void onDeleteBtn();
     void onKnownBtn();
@@ -73,7 +74,7 @@ private:
     QPushButton* m_missingBtn;
     QPushButton* m_soundBtn;
     QPushButton* m_translateBtn;
-    QPushButton* m_skipBtn;
+    MyButton*    m_skipBtn;
     QPushButton* m_laterBtn;
     QPushButton* m_deleteBtn;
     QPushButton* m_knownBtn;
