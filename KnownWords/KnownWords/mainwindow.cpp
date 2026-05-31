@@ -324,8 +324,6 @@ void MainWindow::onSkipBtn2()
 {
     if (onSkipBtn1()) {
         m_soundBtn->click();
-    } else {
-        onErrorMsg("No word to skip.");
     }
 }
 
