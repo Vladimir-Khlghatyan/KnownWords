@@ -115,7 +115,7 @@ void MissingDlg::onStateChanged(int state)
 bool MissingDlg::isValidText(const QString& text)
 {
     static const QRegularExpression spaceRegex("\\s+"); // one or more whitespaces
-    static const QRegularExpression wordRegex("^[a-z]+(?:[-'][a-z]+)*$"); //lowercase letters, '-' or '\''
+    static const QRegularExpression wordRegex("^[a-z]+(?:[-'’][a-z]+)*$"); //lowercase letters, '-' or '\''
 
     const QStringList lines = text.split('\n');
     bool hasValidLine{};
