@@ -4819,3 +4819,15 @@ recruit
 dismiss
 confirmation
 interconnectedness
+symptom
+swallow
+toothache
+infection
+activation
+backache
+painkiller
+boiling
+allergic
+ache
+tablet
+earache
