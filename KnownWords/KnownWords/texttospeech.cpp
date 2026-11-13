@@ -1,4 +1,5 @@
 #include "texttospeech.hpp"
+#include <QDir>
 
 #ifdef _PLAY_SOUND_
 
@@ -7,6 +8,7 @@ TextToSpeech::TextToSpeech(QWidget* parent)
     , m_manager(new QNetworkAccessManager(this))
     , m_player(new QMediaPlayer(this))
     , m_audioOutput(new QAudioOutput(this))
+    , m_tempFile(nullptr)
 {
     m_player->setAudioOutput(m_audioOutput);
     m_audioOutput->setVolume(1.0);
@@ -36,30 +38,43 @@ void TextToSpeech::fetchAudio(const QString& text)
     m_manager->get(request);
 }
 
-void TextToSpeech::playAudio(QNetworkReply *reply)
+void TextToSpeech::playAudio(QNetworkReply* reply)
 {
     if (reply->error() != QNetworkReply::NoError)
     {
-        emit errorOccurred("Network error:   " + reply->errorString() + ".");
+        emit errorOccurred("Network error: " + reply->errorString() + ".");
         reply->deleteLater();
         return;
     }
 
-    QTemporaryFile tempFile;
-    if (!tempFile.open())
+    m_player->stop();
+
+    delete m_tempFile;
+    m_tempFile = new QTemporaryFile(QDir::tempPath() + "/KnownWords-XXXXXX.mp3", this);
+
+    if (!m_tempFile->open())
     {
         emit errorOccurred("Failed to create temporary file.");
         reply->deleteLater();
         return;
     }
 
-    QByteArray audioData = reply->readAll();
-    tempFile.write(audioData);
-    tempFile.close();
+    const QByteArray audioData = reply->readAll();
 
-    QString filePath = tempFile.fileName();
+    if (m_tempFile->write(audioData) != audioData.size() ||
+        !m_tempFile->flush())
+    {
+        emit errorOccurred("Failed to write audio data.");
+        reply->deleteLater();
+        return;
+    }
+
+    const QString filePath = m_tempFile->fileName();
+    m_tempFile->close();
+
     m_player->setSource(QUrl::fromLocalFile(filePath));
     m_player->play();
+
     reply->deleteLater();
 }
 

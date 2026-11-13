@@ -39,6 +39,7 @@ private:
     QNetworkAccessManager*  m_manager;
     QMediaPlayer*           m_player;
     QAudioOutput*           m_audioOutput;
+    QTemporaryFile*         m_tempFile;
 };
 #endif // _PLAY_SOUND_
 
