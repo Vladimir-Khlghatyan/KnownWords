@@ -7,7 +7,7 @@
 // Google's gtx endpoint is currently rate-limited/blocked (HTTP 429) - undefined below
 // to use the MyMemory translator instead. Comment out the #undef to switch back to Google.
 #define _USE_GOOGLE_TRANSLATE_
-#undef _USE_GOOGLE_TRANSLATE_
+//#undef _USE_GOOGLE_TRANSLATE_
 
 #include <QString>
 
