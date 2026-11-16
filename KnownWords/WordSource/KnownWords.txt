@@ -5076,3 +5076,10 @@ touching
 climbing
 undress
 pizza
+heart-rate
+dr
+diagnosis
+health-related
+faulty
+cloth
+discriminate
